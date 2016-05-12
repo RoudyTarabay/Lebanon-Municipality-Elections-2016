@@ -3,7 +3,7 @@
 <style>
 .subunit-boundary {
   stroke: red;
-
+  fill:green;
 
 }	
 
@@ -18,11 +18,13 @@
   font-weight: 300;
   text-anchor: middle;
 }
-path{
-	fill:green;
-}
+
 .bound{
   stroke:red;
+}
+.place{
+fill:black
+
 }
 
 
@@ -49,7 +51,7 @@ var svg = d3.select("body").append("svg")
 //var g=svg.append("g");
 
 
-d3.json("Coordinates/Lebanon_with_provinces.json", function(error, Lebanon) {
+d3.json("Coordinates/leb.json", function(error, Lebanon) {
   	console.log(Lebanon);
   	if (error) throw error;
 	var subunits = topojson.feature(Lebanon, Lebanon.objects.leb_subunits);
@@ -86,8 +88,37 @@ svg.selectAll(".subunit-boundary")
     .data(topojson.feature(Lebanon, Lebanon.objects.provinces).features)
     .enter().append("path")
     .attr("d", path)
+    .attr("fill-opacity",0)
+    .transition().duration(3000)
+    .attr("fill-opacity",1)
+
     .attr("class", function(d,i){return "subunit-boundary " +i})
     .attr("id",function(d,i){console.log(i);return "province"+ i;});
+
+console.log(Lebanon.objects.places);
+
+svg.selectAll(".place")
+    .data(topojson.feature(Lebanon, Lebanon.objects.places).features)
+    .enter().append("path")
+    .attr("d", 0)
+    .transition().duration(4000)
+    .attr("d",path)
+    .attr("class", "place"); 
+
+
+svg.selectAll(".place-label")
+    .data(topojson.feature(Lebanon, Lebanon.objects.places).features)
+  .enter().append("text")
+    .attr("class", "place-label")
+    .attr("transform",0)
+    .transition().duration(5000).ease('bounce')
+    .attr("transform", function(d) { return "translate(" + projection(d.geometry.coordinates) + ")"; })
+    .attr("dy", ".35sem")
+    .text(function(d) { return d.properties.name; }); 
+
+ svg.selectAll(".place-label")
+    .attr("x", function(d) { return d.geometry.coordinates[0] > -1 ? 6 : -6; })
+    .style("text-anchor", function(d) { return d.geometry.coordinates[0] > -1 ? "start" : "end"; });
 
 
  /* 
