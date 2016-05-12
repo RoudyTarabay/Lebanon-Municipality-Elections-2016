@@ -3,8 +3,14 @@
 <style>
 .subunit-boundary {
   stroke: red;
+
+
 }	
 
+.subunit-boundary:hover{
+  fill: blue;
+
+} 
 .subunit-label {
   fill: black;
   fill-opacity: .5;
@@ -14,6 +20,9 @@
 }
 path{
 	fill:green;
+}
+.bound{
+  stroke:red;
 }
 
 
@@ -60,21 +69,26 @@ d3.json("Coordinates/Lebanon_with_provinces.json", function(error, Lebanon) {
 	.projection(projection);
 
 
-	svg.append("path")
+	/*svg.append("path")
 		.datum(subunits)
 		.attr("d", path);
-		;
+		;*/
 
-svg.append("path")
+/*svg.append("path")
     .datum(topojson.mesh(Lebanon, Lebanon.objects.leb_subunits, function(a, b) { return a !== b; }))
     .attr("d", path)
-    .attr("class", "subunit-boundary");
+    .attr("class", "subunit-boundary");*/
+var provinces=Lebanon.objects.provinces;
+console.log(provinces);
+console.log(topojson.feature(Lebanon, Lebanon.objects.provinces));
 
-
-svg.append("path")
-    .datum(topojson.mesh(Lebanon, Lebanon.objects.provinces, function(a, b) { return a !== b; }))
+svg.selectAll(".subunit-boundary")
+    .data(topojson.feature(Lebanon, Lebanon.objects.provinces).features)
+    .enter().append("path")
     .attr("d", path)
-    .attr("class", "subunit-boundary");
+    .attr("class", function(d,i){return "subunit-boundary " +i})
+    .attr("id",function(d,i){console.log(i);return "province"+ i;});
+
 
  /* 
 var projection = d3.geo.albers()
