@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
-.subunit-boundary.IRL {
-  stroke: #aaa;
+.subunit-boundary {
+  stroke: red;
 }	
 
 .subunit-label {
-  fill: #777;
+  fill: black;
   fill-opacity: .5;
   font-size: 20px;
   font-weight: 300;
   text-anchor: middle;
+}
+path{
+	fill:green;
 }
 
 
@@ -37,7 +40,7 @@ var svg = d3.select("body").append("svg")
 //var g=svg.append("g");
 
 
-d3.json("Coordinates/Lebanon.json", function(error, Lebanon) {
+d3.json("Coordinates/Lebanon_with_provinces.json", function(error, Lebanon) {
   	console.log(Lebanon);
   	if (error) throw error;
 	var subunits = topojson.feature(Lebanon, Lebanon.objects.leb_subunits);
@@ -60,6 +63,18 @@ d3.json("Coordinates/Lebanon.json", function(error, Lebanon) {
 	svg.append("path")
 		.datum(subunits)
 		.attr("d", path);
+		;
+
+svg.append("path")
+    .datum(topojson.mesh(Lebanon, Lebanon.objects.leb_subunits, function(a, b) { return a !== b; }))
+    .attr("d", path)
+    .attr("class", "subunit-boundary");
+
+
+svg.append("path")
+    .datum(topojson.mesh(Lebanon, Lebanon.objects.provinces, function(a, b) { return a !== b; }))
+    .attr("d", path)
+    .attr("class", "subunit-boundary");
 
  /* 
 var projection = d3.geo.albers()
