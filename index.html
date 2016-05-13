@@ -8,6 +8,13 @@
 }	
 
 
+.env{
+
+  fill:cyan;
+}
+.env:hover{
+  fill:red;
+}
 .subunit-label {
   fill: black;
   fill-opacity: .5;
@@ -42,9 +49,8 @@ height:100px;
 <script src="lib/jquery.min.js"></script>   
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script rel="stylesheet" href="lib/bootstrap.min.js"></script>
+<link rel="stylesheet" href="lib/font-awesome.min.css">
 
-<link rel="stylesheet" href="lib/bootstrap.min.css">
 
 <head>
 <body>
@@ -116,9 +122,14 @@ console.log(topojson.feature(Lebanon, Lebanon.objects.places).features);
 svg.selectAll(".place")    
 .data(topojson.feature(Lebanon, Lebanon.objects.places).features)
 .enter()
-.append("circle")
-.attr('r',2)
-.attr('cx',0)
+.append("text")
+.attr("font-family","FontAwesome")
+.attr('font-size', function(d) { return '15px';} )
+.attr("class","env")
+.text(function(d) { return '\uf0e0'; }) 
+
+
+
 .transition().duration(2000)
 .attr("transform", function(d,i){
         return "translate("+projection([d.geometry.coordinates[0],d.geometry.coordinates[1]])+")";
@@ -144,7 +155,7 @@ svg.selectAll(".place-label")
     .attr("class", "place-label")
 
     .attr("transform", function(d) { return "translate(" + projection(d.geometry.coordinates) + ")"; })
-    .attr("dx", ".40em")
+    .attr("dx", "1.2em")
     .text(function(d) { return d.properties.name; }); 
 
  svg.selectAll(".place-label")
