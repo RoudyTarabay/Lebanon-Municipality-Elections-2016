@@ -1,14 +1,79 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-<style>
-  .subunit-boundary {
-    stroke: red;
-    fill: #cdd;   
-  }	
-  .subunit-boundary:hover {
-    stroke: red;
-    fill: #dcd; 
-    cursor:pointer; 
+  <!DOCTYPE html>
+  <meta charset="utf-8">
+  <style>
+  #chart {
+        height: 360px;
+        margin: 0 auto;                                               /* NEW */
+        position: relative;
+        width: 360px;
+      }
+      .tooltip {
+        background: #eee;
+        box-shadow: 0 0 5px #999999;
+        color: #333;
+        display: none;
+        font-size: 12px;
+        left: 130px;
+        padding: 10px;
+        position: absolute;
+        text-align: center;
+        top: 95px;
+        width: 80px;
+        z-index: 10;
+      }
+      .legend {
+        font-size: 12px;
+      }
+      rect {
+        cursor: pointer;                                              /* NEW */
+        stroke-width: 2;
+      }
+      rect.disabled {                                                 /* NEW */
+        fill: transparent !important;                                 /* NEW */
+      }                                                               /* NEW */
+      h1 {                                                            /* NEW */
+        font-size: 14px;                                              /* NEW */
+        text-align: center;                                           /* NEW */
+      }                                                               /* NEW */
+    
+    .d3-tip {
+      line-height: 1;
+      font-weight: bold;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 2px;
+    }
+
+    /* Creates a small triangle extender for the tooltip */
+    .d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 15px;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }
+
+    /* Style northward tooltips differently */
+    .d3-tip.n:after {
+      margin: -1px 0 0 0;
+      top: 100%;
+      left: 0;
+    }
+    
+
+    .subunit-boundary {
+      stroke: black;
+      fill: #cdd;   
+    }	
+    .subunit-boundary:hover {
+      stroke: black;
+      fill: #dcd; 
+      cursor:pointer; 
     } 
 
     .districtName {
@@ -19,259 +84,372 @@
       cursor: pointer
     }
     .env{
-
-      fill:cyan;
+      fill:#5e0231;
+      font-size:12px;
     }
     .env:hover{
-      fill:red;
+      fill:#c7a693;
       cursor:pointer;
     }
-    .subunit-label {
-      fill: black;
-      fill-opacity: .5;
-      font-size: 20px;
-      font-weight: 300;
-      text-anchor: middle;
+    .results{
+      position:absolute;
+      visibility: hidden;
+      margin:2%;
+      width:90%;
+      height:90%;
+      background-color: white;
+      border-color:grey;
+      border-style: solid;
+      border-width: 6px;
+      z-index: 4; 
+      opacity: 0.9;
     }
 
-    .bound{
-      stroke:red;
+    .pie{
+      position:absolute;
+      width:1000px;
+      height:1000px;
+      background-color: red;
+      border-style: outset;
+      border-width: 10px;
+      z-index: 5; 
+      opacity: 1;
     }
-    .place{
-      fill:black;
-      width:100px;
-      height:100px;
-    }
-    .place:hover{
-      fill:blue;
-    }
-
   </style>
+  <link rel="stylesheet" href="lib/font-awesome-4.6.2/css/font-awesome.min.css"/>
+
   <script src="lib/topojson.min.js"></script>
 
   <script src="lib/d3/d3.min.js"></script>
-  <script src="lib/jquery.min.js"></script>   
+  <script src="lib/jquery.min.js"></script> 
+  <script src="lib/d3-tip.min.js"></script>
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
 
   <head>
     <body>
+    <svg class="results" id="results">
+      <svg id="pie" class="pie"></svg>
+
+    </svg> 
+
       <script type="text/javascript">
         var width = $(window).width(),
         height = $(window).height();
-/*var projection = d3.geo.albersUsa()
-    .scale(1000)
-    .translate([width / 2, height / 2]);
-var path = d3.geo.path()
-.projection(projection);*/
-var svg = d3.select("body").append("svg")
-.attr("id","mapsvg")
-.attr("width", width)
-.attr("height", height);
-//var g=svg.append("g");
+  var svg = d3.select("body").append("svg")
+  .attr("id","mapsvg")
+  .attr("width", width)
+  .attr("height", height)
+  .attr("style","position:fixed");
 
 
-d3.json("Coordinates/2009_districts.json", function(error, Lebanon) {
- console.log(Lebanon);
- if (error) throw error;
-	//var subunits = topojson.feature(Lebanon, Lebanon.objects.leb_subunits);
+  d3.json("Coordinates/2009_districts.json", function(error, Lebanon) {
+   console.log(Lebanon);
+   if (error) throw error;
 
-	/*svg.append("path")
-	      .datum(topojson.feature(Lebanon, Lebanon.objects.leb_subunits))
-	      .attr("d", d3.geo.path().projection(d3.geo.mercator()));*/
+          var projection = d3.geo.mercator()
+          .scale(20000)
+          .center([36,34])
 
+          .translate([width / 2, height / 2]);
 
-        var projection = d3.geo.mercator()
-        .scale(22000)
-        .center([36,34])
+          var path = d3.geo.path()
+          .projection(projection);
 
-        .translate([width / 2, height / 2]);
+      console.log(Lebanon, Lebanon.features);
+      var g=svg.selectAll(".subunit-boundary")
+      .data(Lebanon.features)
+      .enter().append("g").attr("class","districtContainer");
 
-        var path = d3.geo.path()
-        .projection(projection);
+      g.append("path")
+      .attr("d", path)
+      .attr("fill-opacity",0)
+      .transition().duration(3000)
+      .attr("fill-opacity",1)
+      .attr("class", function(d,i){return "subunit-boundary " +i})
+      .attr("id",function(d,i){return "province"+ i})
 
+      g.append("text")
+      .attr("font-size","10px")
+      .attr("class","districtName")
+      .attr("transform", function(d) { 
+        if(d.properties.DISTRICT=="Zgharta")
+          return "translate(" + path.centroid(d) + ") rotate(45)"; 
+        else  if(d.properties.DISTRICT.indexOf("Marja")>=0)
+          return "translate(" + path.centroid(d) + ") rotate(-25)";
+        else  if(d.properties.DISTRICT.indexOf("Jezzine")>=0)
+          return "translate(" + path.centroid(d) + ") rotate(25)";  
+        else
+          return "translate(" + path.centroid(d) + ")";
+      })
+      .text(function(d){
 
-	/*svg.append("path")
-		.datum(subunits)
-		.attr("d", path);
-		;*/
+        if(d.properties.DISTRICT.indexOf("Beirut")<0 &&d.properties.DISTRICT.indexOf("Saida")<0)
+          return d.properties.DISTRICT
+      })
+      
+      .attr("dx", function(d){
+        var disName=d.properties.DISTRICT;
 
-/*svg.append("path")
-    .datum(topojson.mesh(Lebanon, Lebanon.objects.leb_subunits, function(a, b) { return a !== b; }))
-    .attr("d", path)
-    .attr("class", "subunit-boundary");*/
-    console.log(Lebanon, Lebanon.features);
-    var g=svg.selectAll(".subunit-boundary")
-    .data(Lebanon.features)
-    .enter().append("g").attr("class","districtContainer");
-
-
-    g.append("path")
-    .attr("d", path)
-    .attr("fill-opacity",0)
-    .on("mouseover",function(d){console.log(d.properties.DISTRICT)})
-    .transition().duration(3000)
-    .attr("fill-opacity",1)
-    .attr("class", function(d,i){return "subunit-boundary " +i})
-    .attr("id",function(d,i){console.log(i);return "province"+ i});
-
-    g.append("text")
-    .attr("font-size","10px")
-    .attr("class","districtName")
-    .attr("transform", function(d) { 
-      if(d.properties.DISTRICT=="Zgharta")
-        return "translate(" + path.centroid(d) + ") rotate(45)"; 
-      else  if(d.properties.DISTRICT.indexOf("Marja")>=0)
-        return "translate(" + path.centroid(d) + ") rotate(-25)";
-      else  if(d.properties.DISTRICT.indexOf("Jezzine")>=0)
-        return "translate(" + path.centroid(d) + ") rotate(25)";  
-      else
-        return "translate(" + path.centroid(d) + ")";
-    })
-    .text(function(d){
-
-      if(d.properties.DISTRICT.indexOf("Beirut")<0 &&d.properties.DISTRICT.indexOf("Saida")<0)
-        return d.properties.DISTRICT
-    })
-    
-    .attr("dx", function(d){
-      var disName=d.properties.DISTRICT;
-
-      if(disName.indexOf("Miniyeh")>=0)
-        return "0.5em"
-    })
-    .attr("dy",function(d){
-      var disName=d.properties.DISTRICT;
-      if(disName=="Zgharta"||disName=="Batroun")
-        return "0.5em";
-      else 
-        return "0em"
-    })
-
-    g.append("line")
-    .attr("x1",function(d){
-      if(d.properties.DISTRICT.indexOf("Beirut")>=0 || d.properties.DISTRICT.indexOf("Saida")>=0)
-        return path.centroid(d)[0];
-
-    })
-    .attr("y1",function(d){
-      if(d.properties.DISTRICT.indexOf("Beirut")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0)
-        return path.centroid(d)[1];
-
-    })
-    .attr("x2",
-      function(d,i){
-        if(d.properties.DISTRICT.indexOf("Beirut")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0)
-          return path.centroid(d)[0]-30;
-
+        if(disName.indexOf("Miniyeh")>=0)
+          return "0.5em"
+      })
+      .attr("dy",function(d){
+        var disName=d.properties.DISTRICT;
+        if(disName=="Zgharta"||disName=="Batroun")
+          return "0.5em";
+        else 
+          return "0em"
       })
 
+      g.append("line")
+      .attr("x1",function(d){
+        if(d.properties.DISTRICT.indexOf("Beirut-one")>=0 || d.properties.DISTRICT.indexOf("Saida")>=0)
+          return path.centroid(d)[0];
 
-    .attr("y2",function(d,i){
-      if(d.properties.DISTRICT.indexOf("Beirut")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0){
-        if(d.properties.DISTRICT.indexOf("three")<0&&d.properties.DISTRICT.indexOf("Saida")<0)
-          return path.centroid(d)[1]+Math.pow(-1,i)*20;
-        else{
+      })
+      .attr("y1",function(d){
+        if(d.properties.DISTRICT.indexOf("Beirut-one")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0)
           return path.centroid(d)[1];
-        }
-      }
 
-    })
-    .attr("style","stroke:black;stroke-width:1");
-
-    g.append("text") 
-    .attr("font-size","10px")
-    .attr("class","districtName")
-    .text(function(d){
-      if(d.properties.DISTRICT.indexOf("Beirut")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0){
-        console.log('bla')
-        return d.properties.DISTRICT;
-      }
-    })
-    .attr("transform",function(d,i){
-      if(d.properties.DISTRICT.indexOf("Beirut")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0){
-        var xt=path.centroid(d)[0]-60;
-        var yt=path.centroid(d)[1]+Math.pow(-1,i)*20;
-        if(d.properties.DISTRICT.indexOf("three")<0&& d.properties.DISTRICT.indexOf("Saida")<0)
-          yt=path.centroid(d)[1]+Math.pow(-1,i)*20;
-        else{
-         yt=path.centroid(d)[1];
-       }
-       console.log(xt);
-       console.log(yt)
-
-       return "translate("+xt+","+yt+")";
-     }
-   })
-
-/*svg.selectAll(".place")    
-.data(topojson.feature(Lebanon, Lebanon.objects.places).features)
-.enter()
-.append("text")
-.attr("font-family","FontAwesome")
-.attr('font-size', function(d) { return '15px';} )
-.attr("class","env")
-.text(function(d) { return '\uf0e0'; }) 
-
-
-
-.transition().duration(2000)
-.attr("transform", function(d,i){
-        return "translate("+projection([d.geometry.coordinates[0],d.geometry.coordinates[1]])+")";
       })
-      */
+      .attr("x2",
+        function(d,i){
+          if(d.properties.DISTRICT.indexOf("Beirut-one")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0)
+            return path.centroid(d)[0]-30;
+
+        })
 
 
-/*svg.selectAll(".place")
-    .data(topojson.feature(Lebanon, Lebanon.objects.places).features)
-    .enter().append("path")
-      .html("<span class='glyphicon glyphicon-envelope'></span>")
+      .attr("y2",function(d,i){
+        if(d.properties.DISTRICT.indexOf("Beirut-one")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0){
+        
+            return path.centroid(d)[1];
+          
+        }
 
-    .attr("d", 0)
-    .transition().duration(4000)
-    .attr("d",path)
+      })
+      .attr("style","stroke:black;stroke-width:1");
 
+      g.append("text") 
+      .attr("font-size","10px")
+      .attr("class","districtName")
+      .text(function(d){
+        if(d.properties.DISTRICT.indexOf("Beirut-three")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0){
+          if(d.properties.DISTRICT.indexOf("Beirut-three")>=0)
+            return "Beirut"
+          return d.properties.DISTRICT;
+        }
+      })
+      .attr("transform",function(d,i){
+        if(d.properties.DISTRICT.indexOf("Beirut")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0){
+          var xt=path.centroid(d)[0]-60;
+          var yt=path.centroid(d)[1]+Math.pow(-1,i)*20;
+          if(d.properties.DISTRICT.indexOf("three")<0&& d.properties.DISTRICT.indexOf("Saida")<0)
+            yt=path.centroid(d)[1]+Math.pow(-1,i)*20;
+          else{
+           yt=path.centroid(d)[1];
+         }
+         console.log(xt);
+         console.log(yt)
 
-svg.selectAll(".place-label")
-    .data(topojson.feature(Lebanon, Lebanon.objects.places).features)
+         return "translate("+xt+","+yt+")";
+       }
+     })
+     
+
+  d3.json("Coordinates/baladiyetCoordinates.json",function(error,city){
+  console.log(city);
+  svg.selectAll(".env").data(city)
   .enter().append("text")
-    .attr("transform",0)
-    .transition().duration(5000).ease('bounce')
-    .attr("class", "place-label")
+  .attr("font-family","FontAwesome")
+  .attr("class","env")
+  .on("click",function(d){getResults("Beirut")})
+  .text(function(d) { return '\uf0e0'; }) 
+  .attr("transform", function(d,i){
+          return "translate("+projection([d["Coordinates"][0],d["Coordinates"][1]])+")";
+  })
+  });
+        var summary={
+          "Beirut": {
+            "Contender Lists": [
+            "Beiruti's List",
+            "Beirut Madinati",
+            "Citizens Within a State"
+            ],
+            "Backers": {
+              "Beiruti's List": [
+              "FM", "FPM", "LF", "Kataeb", "Amal", "PSP", "Tashnag", "Michel Pharaon"
 
-    .attr("transform", function(d) { return "translate(" + projection(d.geometry.coordinates) + ")"; })
-    .attr("dx", "1.2em")
-    .text(function(d) { return d.properties.name; }); 
-
- svg.selectAll(".place-label")
-    .attr("x", function(d) { return d.geometry.coordinates[0] > -1 ? 6 : -6; })
-    .style("text-anchor", function(d) { return d.geometry.coordinates[0] > -1 ? "start" : "end"; });
-
-
- /* 
-var projection = d3.geo.albers()
-    .center([0, 55.4])
-    .rotate([4.4, 0])
-    .scale(6000)
-    .translate([width / 2, height / 2]);
-
-    var path = d3.geo.path()
-    .projection(projection);
-
-svg.selectAll(".subunit")
-    .data(topojson.feature(Lebanon, Lebanon.objects.leb_subunits).features)
-  .enter().append("path")
-    .attr("class", function(d) { return "subunit " + d.id; })
-    .attr("d", path);
- 
-  /*g.insert("path", ".graticule")
-      .datum(topojson.mesh(Lebanon, Lebanon.objects.states, function(a, b) { return a !== b; }))
-      .attr("class", "state-boundary")
-      .attr("d", path)*/
-    });
+              ],
+              "Beirut Madinati": ["Civil society"],
+              "Citizens Within a State": ["Charbel Nahas"]
 
 
-  </script>
-</body>
+
+            }
+
+          }
+
+        }
+
+      });
+
+  function getResults(baladiyye){
+
+      d3.csv("data/ParticipationRate.csv",function(error,rate){
+        console.log(rate);
+        var arr=[];
+        console.log(parseFloat(rate.Rate))
+        arr[0]={"Participated":parseFloat(rate[0].Rate)};
+        arr[1]={"Didn't Participate":100-parseFloat(rate[0].Rate)};
+        console.log(arr)
+        drawPie(arr);
+
+      });
+      var resultsSvg=d3.selectAll(".results");
+      resultsSvg.attr("style","visibility:visible")
+     d3.csv("data/"+baladiyye+".csv", function(error, results) {
+        svg.selectAll(".bla").data(results,function(d){
+
+
+
+      });
+  });
+      }
+  function drawPie(rate, optionalTextAnalysis){
+
+        var width = $("#pie").width();
+        var height = $("#pie").height();
+        var radius = Math.min(width, height) / 2;
+        var donutWidth = 75;
+        var legendRectSize = 18;
+        var legendSpacing = 4;
+
+        var color = d3.scale.category20b();
+
+        var svg = d3.select('#pie')
+          .append('g')
+          .attr('transform', 'translate(' + (width / 2) + 
+            ',' + (height / 2) + ')');
+
+        var arc = d3.svg.arc()
+          .innerRadius(radius - donutWidth)
+          .outerRadius(radius);
+
+        var pie = d3.layout.pie()
+          .value(function(d) { return d.rate; })
+          .sort(null);
+
+        var tooltip = d3.select('#pie')
+          .append('div')
+          .attr('class', 'tooltip');
+        
+        tooltip.append('div')
+          .attr('class', 'label');
+
+        tooltip.append('div')
+          .attr('class', 'count');
+
+        tooltip.append('div')
+          .attr('class', 'percent');
+
+
+          var path = svg.selectAll('path')
+            .data(pie(rate))
+            .enter()
+            .append('path')
+            .attr('d', arc)
+            .attr('fill', function(d, i) { 
+              return color(d.data.label); 
+            })                                                        // UPDATED (removed semicolon)
+            .each(function(d) { this._current = d; });                // NEW
+
+          path.on('mouseover', function(d) {
+            var total = d3.sum(dataset.map(function(d) {
+              return (d.enabled) ? d.count : 0;                       // UPDATED
+            }));
+            var percent = Math.round(1000 * d.data.count / total) / 10;
+            tooltip.select('.label').html(d.data.label);
+            tooltip.select('.count').html(d.data.count); 
+            tooltip.select('.percent').html(percent + '%'); 
+            tooltip.style('display', 'block');
+          });
+          
+          path.on('mouseout', function() {
+            tooltip.style('display', 'none');
+          });
+
+          /* OPTIONAL 
+          path.on('mousemove', function(d) {
+            tooltip.style('top', (d3.event.pageY + 10) + 'px')
+              .style('left', (d3.event.pageX + 10) + 'px');
+          });
+          */
+            
+          var legend = svg.selectAll('.legend')
+            .data(color.domain())
+            .enter()
+            .append('g')
+            .attr('class', 'legend')
+            .attr('transform', function(d, i) {
+              var height = legendRectSize + legendSpacing;
+              var offset =  height * color.domain().length / 2;
+              var horz = -2 * legendRectSize;
+              var vert = i * height - offset;
+              return 'translate(' + horz + ',' + vert + ')';
+            });
+
+          legend.append('rect')
+            .attr('width', legendRectSize)
+            .attr('height', legendRectSize)                                   
+            .style('fill', color)
+            .style('stroke', color)                                   // UPDATED (removed semicolon)
+            .on('click', function(label) {                            // NEW
+              var rect = d3.select(this);                             // NEW
+              var enabled = true;                                     // NEW
+              var totalEnabled = d3.sum(dataset.map(function(d) {     // NEW
+                return (d.enabled) ? 1 : 0;                           // NEW
+              }));                                                    // NEW
+              
+              if (rect.attr('class') === 'disabled') {                // NEW
+                rect.attr('class', '');                               // NEW
+              } else {                                                // NEW
+                if (totalEnabled < 2) return;                         // NEW
+                rect.attr('class', 'disabled');                       // NEW
+                enabled = false;                                      // NEW
+              }                                                       // NEW
+
+              pie.value(function(d) {                                 // NEW
+                if (d.label === label) d.enabled = enabled;           // NEW
+                return (d.enabled) ? d.count : 0;                     // NEW
+              });                                                     // NEW
+
+              path = path.data(pie(dataset));                         // NEW
+
+              path.transition()                                       // NEW
+                .duration(750)                                        // NEW
+                .attrTween('d', function(d) {                         // NEW
+                  var interpolate = d3.interpolate(this._current, d); // NEW
+                  this._current = interpolate(0);                     // NEW
+                  return function(t) {                                // NEW
+                    return arc(interpolate(t));                       // NEW
+                  };                                                  // NEW
+                });                                                   // NEW
+            });                                                       // NEW
+            
+          legend.append('text')
+            .attr('x', legendRectSize + legendSpacing)
+            .attr('y', legendRectSize - legendSpacing)
+            .text(function(d) { return d; });
+
+        };
+
+      
+    
+
+    </script>
+  </body>
 
