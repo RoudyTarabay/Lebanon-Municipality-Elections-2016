@@ -1,13 +1,20 @@
-  <!DOCTYPE html>
-  <meta charset="utf-8">
-  <style>
-  #chart {
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+    .pielabels {
+        text-anchor: middle;
+        pointer-events: none;
+    }
+    
+    #chart {
         height: 360px;
-        margin: 0 auto;                                               /* NEW */
+        margin: 0 auto;
+        /* NEW */
         position: relative;
         width: 360px;
-      }
-      .tooltip {
+    }
+    
+    .tooltip {
         background: #eee;
         box-shadow: 0 0 5px #999999;
         color: #333;
@@ -20,376 +27,469 @@
         top: 95px;
         width: 80px;
         z-index: 10;
-      }
-      .legend {
+    }
+    
+    .legend {
         font-size: 12px;
-      }
-      rect {
-        cursor: pointer;                                              /* NEW */
+    }
+    
+    rect {
+        cursor: pointer;
+        /* NEW */
         stroke-width: 2;
-      }
-      rect.disabled {                                                 /* NEW */
-        fill: transparent !important;                                 /* NEW */
-      }                                                               /* NEW */
-      h1 {                                                            /* NEW */
-        font-size: 14px;                                              /* NEW */
-        text-align: center;                                           /* NEW */
-      }                                                               /* NEW */
+    }
+    
+    rect.disabled {
+        /* NEW */
+        fill: transparent !important;
+        /* NEW */
+    }
+    /* NEW */
+    
+    h1 {
+        /* NEW */
+        font-size: 14px;
+        /* NEW */
+        text-align: center;
+        /* NEW */
+    }
+    /* NEW */
     
     .d3-tip {
-      line-height: 1;
-      font-weight: bold;
-      padding: 12px;
-      background: rgba(0, 0, 0, 0.8);
-      color: #fff;
-      border-radius: 2px;
+        line-height: 1;
+        font-weight: bold;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        border-radius: 2px;
     }
-
     /* Creates a small triangle extender for the tooltip */
+    
     .d3-tip:after {
-      box-sizing: border-box;
-      display: inline;
-      font-size: 15px;
-      width: 100%;
-      line-height: 1;
-      color: rgba(0, 0, 0, 0.8);
-      content: "\25BC";
-      position: absolute;
-      text-align: center;
+        box-sizing: border-box;
+        display: inline;
+        font-size: 15px;
+        width: 100%;
+        line-height: 1;
+        color: rgba(0, 0, 0, 0.8);
+        content: "\25BC";
+        position: absolute;
+        text-align: center;
     }
-
     /* Style northward tooltips differently */
+    
     .d3-tip.n:after {
-      margin: -1px 0 0 0;
-      top: 100%;
-      left: 0;
+        margin: -1px 0 0 0;
+        top: 100%;
+        left: 0;
     }
     
-
     .subunit-boundary {
-      stroke: black;
-      fill: #cdd;   
-    }	
+        stroke: black;
+        fill: #cdd;
+    }
+    
     .subunit-boundary:hover {
-      stroke: black;
-      fill: #dcd; 
-      cursor:pointer; 
-    } 
-
+        stroke: black;
+        fill: #dcd;
+        cursor: pointer;
+    }
+    
     .districtName {
-      fill: black;
-      fill-opacity: .5;
-      text-anchor: middle;
-      font-weight:bold;
-      cursor: pointer
+        fill: black;
+        fill-opacity: .5;
+        text-anchor: middle;
+        font-weight: bold;
+        cursor: pointer
     }
-    .env{
-      fill:#5e0231;
-      font-size:12px;
+    
+    .env {
+        fill: #5e0231;
+        font-size: 12px;
     }
-    .env:hover{
-      fill:#c7a693;
-      cursor:pointer;
+    
+    .env:hover {
+        fill: #c7a693;
+        cursor: pointer;
     }
-    .results{
-      position:absolute;
+    
+    .results {
+        position: absolute;
+        visibility: hidden;
+        margin: 2%;
+        width: 90%;
+        height: 90%;
+        background-color: white;
+        border-color: grey;
+        border-style: solid;
+        border-width: 6px;
+        z-index: 4;
+        opacity: 0.9;
+    }
+    
+    .pie {
+        position: absolute;
+        margin: 2%;
+        background-color: white;
+        visibility: hidden;
+        border-color: grey;
+        border-style: solid;
+        border-width: 6px;
+        z-index: 5;
+        opacity: 1;
+    }
+    .hide{
       visibility: hidden;
-      margin:2%;
-      width:90%;
-      height:90%;
-      background-color: white;
-      border-color:grey;
-      border-style: solid;
-      border-width: 6px;
-      z-index: 4; 
-      opacity: 0.9;
+
     }
+</style>
+<link rel="stylesheet" href="lib/font-awesome-4.6.2/css/font-awesome.min.css" />
 
-    .pie{
-      position:absolute;
-      width:1000px;
-      height:1000px;
-      background-color: red;
-      border-style: outset;
-      border-width: 10px;
-      z-index: 5; 
-      opacity: 1;
-    }
-  </style>
-  <link rel="stylesheet" href="lib/font-awesome-4.6.2/css/font-awesome.min.css"/>
+<script src="lib/topojson.min.js"></script>
 
-  <script src="lib/topojson.min.js"></script>
+<script src="lib/d3/d3.min.js"></script>
+<script src="lib/jquery.min.js"></script>
+<script src="lib/d3-tip.min.js"></script>
 
-  <script src="lib/d3/d3.min.js"></script>
-  <script src="lib/jquery.min.js"></script> 
-  <script src="lib/d3-tip.min.js"></script>
-
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 
 
-  <head>
+<head>
+
     <body>
-    <svg class="results" id="results">
-      <svg id="pie" class="pie"></svg>
-
-    </svg> 
-
-      <script type="text/javascript">
-        var width = $(window).width(),
-        height = $(window).height();
-  var svg = d3.select("body").append("svg")
-  .attr("id","mapsvg")
-  .attr("width", width)
-  .attr("height", height)
-  .attr("style","position:fixed");
+        <svg class="results hide" id="results">
+    </svg>
 
 
-  d3.json("Coordinates/2009_districts.json", function(error, Lebanon) {
-   console.log(Lebanon);
-   if (error) throw error;
+        <script type="text/javascript">
+            var width = $(window).width(),
+                height = $(window).height();
+            var svgdim = {
+                width: $('.results').width(),
+                height: $('.results').height()
+            };
+            var svg = d3.select("body").append("svg")
+                .attr("id", "mapsvg")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("style", "position:fixed")
+                .on("click",function(){
+                  if(d3.event.target.className.baseVal!="env"){
+                    d3.select("#pie").selectAll("*").remove();
+                    d3.selectAll('.hide').attr("style","visibility:hidden")
+                  }
 
-          var projection = d3.geo.mercator()
-          .scale(20000)
-          .center([36,34])
-
-          .translate([width / 2, height / 2]);
-
-          var path = d3.geo.path()
-          .projection(projection);
-
-      console.log(Lebanon, Lebanon.features);
-      var g=svg.selectAll(".subunit-boundary")
-      .data(Lebanon.features)
-      .enter().append("g").attr("class","districtContainer");
-
-      g.append("path")
-      .attr("d", path)
-      .attr("fill-opacity",0)
-      .transition().duration(3000)
-      .attr("fill-opacity",1)
-      .attr("class", function(d,i){return "subunit-boundary " +i})
-      .attr("id",function(d,i){return "province"+ i})
-
-      g.append("text")
-      .attr("font-size","10px")
-      .attr("class","districtName")
-      .attr("transform", function(d) { 
-        if(d.properties.DISTRICT=="Zgharta")
-          return "translate(" + path.centroid(d) + ") rotate(45)"; 
-        else  if(d.properties.DISTRICT.indexOf("Marja")>=0)
-          return "translate(" + path.centroid(d) + ") rotate(-25)";
-        else  if(d.properties.DISTRICT.indexOf("Jezzine")>=0)
-          return "translate(" + path.centroid(d) + ") rotate(25)";  
-        else
-          return "translate(" + path.centroid(d) + ")";
-      })
-      .text(function(d){
-
-        if(d.properties.DISTRICT.indexOf("Beirut")<0 &&d.properties.DISTRICT.indexOf("Saida")<0)
-          return d.properties.DISTRICT
-      })
-      
-      .attr("dx", function(d){
-        var disName=d.properties.DISTRICT;
-
-        if(disName.indexOf("Miniyeh")>=0)
-          return "0.5em"
-      })
-      .attr("dy",function(d){
-        var disName=d.properties.DISTRICT;
-        if(disName=="Zgharta"||disName=="Batroun")
-          return "0.5em";
-        else 
-          return "0em"
-      })
-
-      g.append("line")
-      .attr("x1",function(d){
-        if(d.properties.DISTRICT.indexOf("Beirut-one")>=0 || d.properties.DISTRICT.indexOf("Saida")>=0)
-          return path.centroid(d)[0];
-
-      })
-      .attr("y1",function(d){
-        if(d.properties.DISTRICT.indexOf("Beirut-one")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0)
-          return path.centroid(d)[1];
-
-      })
-      .attr("x2",
-        function(d,i){
-          if(d.properties.DISTRICT.indexOf("Beirut-one")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0)
-            return path.centroid(d)[0]-30;
-
-        })
-
-
-      .attr("y2",function(d,i){
-        if(d.properties.DISTRICT.indexOf("Beirut-one")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0){
-        
-            return path.centroid(d)[1];
-          
-        }
-
-      })
-      .attr("style","stroke:black;stroke-width:1");
-
-      g.append("text") 
-      .attr("font-size","10px")
-      .attr("class","districtName")
-      .text(function(d){
-        if(d.properties.DISTRICT.indexOf("Beirut-three")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0){
-          if(d.properties.DISTRICT.indexOf("Beirut-three")>=0)
-            return "Beirut"
-          return d.properties.DISTRICT;
-        }
-      })
-      .attr("transform",function(d,i){
-        if(d.properties.DISTRICT.indexOf("Beirut")>=0|| d.properties.DISTRICT.indexOf("Saida")>=0){
-          var xt=path.centroid(d)[0]-60;
-          var yt=path.centroid(d)[1]+Math.pow(-1,i)*20;
-          if(d.properties.DISTRICT.indexOf("three")<0&& d.properties.DISTRICT.indexOf("Saida")<0)
-            yt=path.centroid(d)[1]+Math.pow(-1,i)*20;
-          else{
-           yt=path.centroid(d)[1];
-         }
-         console.log(xt);
-         console.log(yt)
-
-         return "translate("+xt+","+yt+")";
-       }
-     })
-     
-
-  d3.json("Coordinates/baladiyetCoordinates.json",function(error,city){
-  console.log(city);
-  svg.selectAll(".env").data(city)
-  .enter().append("text")
-  .attr("font-family","FontAwesome")
-  .attr("class","env")
-  .on("click",function(d){getResults("Beirut")})
-  .text(function(d) { return '\uf0e0'; }) 
-  .attr("transform", function(d,i){
-          return "translate("+projection([d["Coordinates"][0],d["Coordinates"][1]])+")";
-  })
-  });
-        var summary={
-          "Beirut": {
-            "Contender Lists": [
-            "Beiruti's List",
-            "Beirut Madinati",
-            "Citizens Within a State"
-            ],
-            "Backers": {
-              "Beiruti's List": [
-              "FM", "FPM", "LF", "Kataeb", "Amal", "PSP", "Tashnag", "Michel Pharaon"
-
-              ],
-              "Beirut Madinati": ["Civil society"],
-              "Citizens Within a State": ["Charbel Nahas"]
-
-
-
+                });
+            console.log(d3.select("#pie")[0][0]);
+            if(d3.select("#pie")[0][0]==null){
+              d3.select("body")
+                  .append("svg")
+                  .attr("id", "pie")
+                  .attr("class", "pie hide")
+                  .attr("width", svgdim.width / 2)
+                  .attr("height", svgdim.height / 2);
             }
 
-          }
 
-        }
+            d3.json("Coordinates/2009_districts.json", function(error, Lebanon) {
+                if (error) throw error;
 
-      });
+                var projection = d3.geo.mercator()
+                    .scale(20000)
+                    .center([36, 34])
 
-  function getResults(baladiyye){
+                .translate([width / 2, height / 2]);
 
-      d3.csv("data/ParticipationRate.csv",function(error,rate){
-        console.log(rate);
-        var arr=[];
-        console.log(parseFloat(rate.Rate))
-        arr[0]={"Participated":parseFloat(rate[0].Rate)};
-        arr[1]={"Didn't Participate":100-parseFloat(rate[0].Rate)};
-        console.log(arr)
-        drawPie(arr);
+                var path = d3.geo.path()
+                    .projection(projection);
 
-      });
-      var resultsSvg=d3.selectAll(".results");
-      resultsSvg.attr("style","visibility:visible")
-     d3.csv("data/"+baladiyye+".csv", function(error, results) {
-        svg.selectAll(".bla").data(results,function(d){
+                var g = svg.selectAll(".subunit-boundary")
+                    .data(Lebanon.features)
+                    .enter().append("g").attr("class", "districtContainer");
+
+                g.append("path")
+                    .attr("d", path)
+                    .attr("fill-opacity", 0)
+                    .transition().duration(3000)
+                    .attr("fill-opacity", 1)
+                    .attr("class", function(d, i) {
+                        return "subunit-boundary " + i
+                    })
+                    .attr("id", function(d, i) {
+                        return "province" + i
+                    })
+
+                g.append("text")
+                    .attr("font-size", "10px")
+                    .attr("class", "districtName")
+                    .attr("transform", function(d) {
+                        if (d.properties.DISTRICT == "Zgharta")
+                            return "translate(" + path.centroid(d) + ") rotate(45)";
+                        else if (d.properties.DISTRICT.indexOf("Marja") >= 0)
+                            return "translate(" + path.centroid(d) + ") rotate(-25)";
+                        else if (d.properties.DISTRICT.indexOf("Jezzine") >= 0)
+                            return "translate(" + path.centroid(d) + ") rotate(25)";
+                        else
+                            return "translate(" + path.centroid(d) + ")";
+                    })
+                    .text(function(d) {
+
+                        if (d.properties.DISTRICT.indexOf("Beirut") < 0 && d.properties.DISTRICT.indexOf("Saida") < 0)
+                            return d.properties.DISTRICT
+                    })
+
+                .attr("dx", function(d) {
+                        var disName = d.properties.DISTRICT;
+
+                        if (disName.indexOf("Miniyeh") >= 0)
+                            return "0.5em"
+                    })
+                    .attr("dy", function(d) {
+                        var disName = d.properties.DISTRICT;
+                        if (disName == "Zgharta" || disName == "Batroun")
+                            return "0.5em";
+                        else
+                            return "0em"
+                    })
+
+                g.append("line")
+                    .attr("x1", function(d) {
+                        if (d.properties.DISTRICT.indexOf("Beirut-one") >= 0 || d.properties.DISTRICT.indexOf("Saida") >= 0)
+                            return path.centroid(d)[0];
+
+                    })
+                    .attr("y1", function(d) {
+                        if (d.properties.DISTRICT.indexOf("Beirut-one") >= 0 || d.properties.DISTRICT.indexOf("Saida") >= 0)
+                            return path.centroid(d)[1];
+
+                    })
+                    .attr("x2",
+                        function(d, i) {
+                            if (d.properties.DISTRICT.indexOf("Beirut-one") >= 0 || d.properties.DISTRICT.indexOf("Saida") >= 0)
+                                return path.centroid(d)[0] - 30;
+
+                        })
+
+
+                .attr("y2", function(d, i) {
+                        if (d.properties.DISTRICT.indexOf("Beirut-one") >= 0 || d.properties.DISTRICT.indexOf("Saida") >= 0) {
+
+                            return path.centroid(d)[1];
+
+                        }
+
+                    })
+                    .attr("style", "stroke:black;stroke-width:1");
+
+                g.append("text")
+                    .attr("font-size", "10px")
+                    .attr("class", "districtName")
+                    .text(function(d) {
+                        if (d.properties.DISTRICT.indexOf("Beirut-three") >= 0 || d.properties.DISTRICT.indexOf("Saida") >= 0) {
+                            if (d.properties.DISTRICT.indexOf("Beirut-three") >= 0)
+                                return "Beirut"
+                            return d.properties.DISTRICT;
+                        }
+                    })
+                    .attr("transform", function(d, i) {
+                        if (d.properties.DISTRICT.indexOf("Beirut") >= 0 || d.properties.DISTRICT.indexOf("Saida") >= 0) {
+                            var xt = path.centroid(d)[0] - 60;
+                            var yt = path.centroid(d)[1] + Math.pow(-1, i) * 20;
+                            if (d.properties.DISTRICT.indexOf("three") < 0 && d.properties.DISTRICT.indexOf("Saida") < 0)
+                                yt = path.centroid(d)[1] + Math.pow(-1, i) * 20;
+                            else {
+                                yt = path.centroid(d)[1];
+                            }
+
+
+                            return "translate(" + xt + "," + yt + ")";
+                        }
+                    })
+
+
+                d3.json("Coordinates/baladiyetCoordinates.json", function(error, city) {
+                    svg.selectAll(".env").data(city)
+                        .enter().append("text")
+                        .attr("font-family", "FontAwesome")
+                        .attr("class", "env")
+                        .on("click", function(d) {
+                            getResults("Beirut")
+                        })
+                        .text(function(d) {
+                            return '\uf0e0';
+                        })
+                        .attr("transform", function(d, i) {
+                            return "translate(" + projection([d["Coordinates"][0], d["Coordinates"][1]]) + ")";
+                        })
+                });
+                var summary = {
+                    "Beirut": {
+                        "Contender Lists": [
+                            "Beiruti's List",
+                            "Beirut Madinati",
+                            "Citizens Within a State"
+                        ],
+                        "Backers": {
+                            "Beiruti's List": [
+                                "FM", "FPM", "LF", "Kataeb", "Amal", "PSP", "Tashnag", "Michel Pharaon"
+
+                            ],
+                            "Beirut Madinati": ["Civil society"],
+                            "Citizens Within a State": ["Charbel Nahas"]
 
 
 
-      });
-  });
-      }
-  function drawPie(rate, optionalTextAnalysis){
+                        }
 
-        var width = $("#pie").width();
-        var height = $("#pie").height();
-        var radius = Math.min(width, height) / 2;
-        var donutWidth = 75;
-        var legendRectSize = 18;
-        var legendSpacing = 4;
+                    }
 
-        var color = d3.scale.category20b();
+                }
 
-        var svg = d3.select('#pie')
-          .append('g')
-          .attr('transform', 'translate(' + (width / 2) + 
-            ',' + (height / 2) + ')');
+            });
 
-        var arc = d3.svg.arc()
-          .innerRadius(radius - donutWidth)
-          .outerRadius(radius);
+            function getResults(baladiyye) {
 
-        var pie = d3.layout.pie()
-          .value(function(d) { return d.rate; })
-          .sort(null);
+                d3.csv("data/ParticipationRate.csv", function(error, rate) {
+                    var arr = [];
+                    arr[0] = {
+                        label: "Participated",
+                        Rate: parseFloat(rate[0].Rate)
+                    };
+                    arr[1] = {
+                        label: "Didn't participate",
+                        Rate: 100 - parseFloat(rate[0].Rate)
+                    };
+                    drawPie(arr);
 
-        var tooltip = d3.select('#pie')
-          .append('div')
-          .attr('class', 'tooltip');
-        
-        tooltip.append('div')
-          .attr('class', 'label');
-
-        tooltip.append('div')
-          .attr('class', 'count');
-
-        tooltip.append('div')
-          .attr('class', 'percent');
+                });
+                var resultsSvg = d3.selectAll(".results");
+                d3.selectAll(".hide").attr("style", "visibility:visible");
+                d3.csv("data/" + baladiyye + ".csv", function(error, results) {
+                    svg.selectAll(".bla").data(results, function(d) {
 
 
-          var path = svg.selectAll('path')
-            .data(pie(rate))
-            .enter()
-            .append('path')
-            .attr('d', arc)
-            .attr('fill', function(d, i) { 
-              return color(d.data.label); 
-            })                                                        // UPDATED (removed semicolon)
-            .each(function(d) { this._current = d; });                // NEW
 
-          path.on('mouseover', function(d) {
-            var total = d3.sum(dataset.map(function(d) {
-              return (d.enabled) ? d.count : 0;                       // UPDATED
-            }));
-            var percent = Math.round(1000 * d.data.count / total) / 10;
-            tooltip.select('.label').html(d.data.label);
-            tooltip.select('.count').html(d.data.count); 
-            tooltip.select('.percent').html(percent + '%'); 
-            tooltip.style('display', 'block');
-          });
-          
-          path.on('mouseout', function() {
-            tooltip.style('display', 'none');
-          });
+                    });
+                });
+            }
 
-          /* OPTIONAL 
-          path.on('mousemove', function(d) {
-            tooltip.style('top', (d3.event.pageY + 10) + 'px')
-              .style('left', (d3.event.pageX + 10) + 'px');
-          });
-          */
-            
-          var legend = svg.selectAll('.legend')
+            function drawPie(rate, optionalTextAnalysis) {
+
+                var width = $("#pie").width();
+                var height = $("#pie").height();
+                var radius = Math.min(width, height) / 2;
+                var donutWidth = 75;
+                var legendRectSize = 18;
+                var legendSpacing = 4;
+                var color = d3.scale.ordinal()
+                    .range(['#00CCCC', '#0099FF']);
+                var hovercolor = d3.scale.ordinal()
+                    .range(['#0099CC', '#0066FF']);
+
+
+
+                var svg = d3.select('#pie')
+                    .append('g')
+                    .attr('height', 1000)
+                    .attr('width', 1000)
+                    .attr('transform', 'translate(' + (width / 2) +
+                        ',' + (height / 2) + ')');
+
+                var arc = d3.svg.arc()
+                    .outerRadius(radius);
+
+
+                console.log(arc)
+                var pie = d3.layout.pie()
+                    .value(function(d) {
+                        console.log(d)
+                        return d.Rate;
+                    })
+                    .sort(null);
+
+                var tooltip = d3.select('#pie')
+                    .append('div')
+                    .attr('class', 'tooltip');
+
+                tooltip.append('div')
+                    .attr('class', 'label');
+
+                tooltip.append('div')
+                    .attr('class', 'count');
+
+                tooltip.append('div')
+                    .attr('class', 'percent');
+
+                var labelArc = d3.svg.arc()
+                    .outerRadius(radius - 40)
+                    .innerRadius(radius - 40);
+                var g2 = svg.selectAll(".pathgroup")
+                    .data(pie(rate))
+                    .enter().append("g")
+                    .attr("class", "pathgroup");
+
+
+                var path = g2
+                    .append('path')
+                    .attr('style', 'stroke:grey;cursor:pointer')
+                    .on('mouseover', function(d) {
+                        d3.select(this).attr('fill', function(d, i) {
+                            return hovercolor(d.data.label);
+
+                        }).on('mouseout', function(d) {
+
+                            pietip.hide(d);
+                            d3.select(this).attr('fill', function(d) {
+                                return color(d.data.label);
+
+                            });
+
+                        });
+
+                        pietip.show(d)
+                    })
+
+                .attr('fill', function(d, i) {
+                        return color(d.data.label);
+                    }) // UPDATED (removed semicolon)
+                    .each(function(d) {
+                        this._current = d;
+                    })
+
+                .transition()
+                    .duration(2000)
+                    .attrTween("d", tweenPie);
+                g2
+                    .append("text")
+                    .attr("class", "pielabels")
+                    .text(function(d) {
+                        console.log(d)
+                        return d.data.label;
+                    })
+                    .attr("transform",
+                        function(d) {
+                            return "translate(" + labelArc.centroid(d) + ")";
+                        });
+
+                var pietip = d3.tip()
+                    .attr('class', 'd3-tip')
+                    .offset([-10, 0])
+                    .html(function(d) {
+                        return "<strong>" + d.data.label + ":</strong> <span style='color:red'>" + d.data.Rate + "</span></strong>"
+                    })
+                g2.call(pietip);
+
+
+
+                /* OPTIONAL 
+                path.on('mousemove', function(d) {
+                  tooltip.style('top', (d3.event.pageY + 10) + 'px')
+                    .style('left', (d3.event.pageX + 10) + 'px');
+                });
+                */
+
+                /* var legend = svg.selectAll('.legend')
             .data(color.domain())
             .enter()
             .append('g')
@@ -407,10 +507,10 @@
             .attr('height', legendRectSize)                                   
             .style('fill', color)
             .style('stroke', color)                                   // UPDATED (removed semicolon)
-            .on('click', function(label) {                            // NEW
+            .o('click', function(label) {                            // NEW
               var rect = d3.select(this);                             // NEW
               var enabled = true;                                     // NEW
-              var totalEnabled = d3.sum(dataset.map(function(d) {     // NEW
+              var totalEnabled = d3.sum(rate.map(function(d) {     // NEW
                 return (d.enabled) ? 1 : 0;                           // NEW
               }));                                                    // NEW
               
@@ -427,7 +527,7 @@
                 return (d.enabled) ? d.count : 0;                     // NEW
               });                                                     // NEW
 
-              path = path.data(pie(dataset));                         // NEW
+              path = path.data(pie(rate));                         // NEW
 
               path.transition()                                       // NEW
                 .duration(750)                                        // NEW
@@ -444,12 +544,16 @@
             .attr('x', legendRectSize + legendSpacing)
             .attr('y', legendRectSize - legendSpacing)
             .text(function(d) { return d; });
-
-        };
-
-      
-    
-
-    </script>
-  </body>
-
+*/
+                function tweenPie(b) {
+                    var i = d3.interpolate({
+                        startAngle: 1.1 * Math.PI,
+                        endAngle: 1.1 * Math.PI
+                    }, b);
+                    return function(t) {
+                        return arc(i(t));
+                    };
+                }
+            };
+        </script>
+    </body>
