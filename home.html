@@ -33,7 +33,13 @@ text {
   top: 100%;
   left: 0;
 }
-
+.bubbles{
+  opacity: 1;
+}
+.bubbles:hover{
+  cursor: pointer;
+  opacity: 0.5;
+}
 </style>
 <body>
 <center><b>Chemil follower statuses count</b></center>
@@ -44,7 +50,8 @@ text {
 
 var diameter = 1500, //max size of the bubbles
  color = d3.scale.ordinal()
-                    .range(['red', 'blue']);
+                    .range(['#F59B84', '#EED2B0','#F5B68C','#C0EAC0','#BDE0D1']);
+                   
 var bubble = d3.layout.pack()
     .sort(null)
     .size([diameter, diameter])
@@ -60,7 +67,7 @@ var tip = d3.tip()
   .offset([-10, 0])
   .html(function(d) {
   	console.log(d);
-    return "<strong>Name: </strong> <span style='color:red'>" + d.name+"</span></strong><br><strong>Statuses count: </strong> <span style='color:red'>"+d.value+"</span></strong>";
+    return "<strong>Name: </strong> <span style='color:red'>" + d.name.split("").reverse().join("")+"</span></strong><br><strong>Number of Votes: </strong> <span style='color:red'>"+d.value+"</span></strong>";
   });
 d3.csv("data/Beirut.csv", function(error, data){
 	console.log(data)
@@ -91,14 +98,16 @@ d3.csv("data/Beirut.csv", function(error, data){
 
     //create the bubbles
     bubbles.append("circle")
+        .attr("class","bubbles")
         .attr("r", function(d){ return 0 })
         .attr("cx", function(d){ return d.x; })
         .attr("cy", function(d){ return d.y; })
         .style("fill", function(d) { return color(d.list); }).on("mouseover",tip.show)
         .on("mouseout",tip.hide)
         .attr("opacity",0)
-        .transition().duration(10000).attr("opacity",100)
-        .attr("r", function(d){ return d.r; });
+        .transition().attr("opacity",100)
+        .attr("r", function(d){ return d.r; }).delay(function(d,i){return i * 30;})
+
 
 
 
@@ -109,13 +118,20 @@ d3.csv("data/Beirut.csv", function(error, data){
         .attr("x", function(d){ return d.x; })
         .attr("y", function(d){ return d.y + 5; })
         .attr("text-anchor", "middle")
-        .text(function(d){ return d["CandidateName"]; })
+        .text(function(d){ return d["CandidateName"].split("").reverse().join(""); })
         .style({
             "fill":"white", 
             "font-family":"Helvetica Neue, Helvetica, Arial, san-serif",
             "font-size": "12px"
         })
           svg.call(tip);
+    svg.selectAll("text").attr("style",function(d){
+      if(this.getComputedTextLength()>d.r*2)
+        return "visibility:hidden";
+      else
+        return  "fill:white; font-family:Helvetica Neue Helvetica, Arial, san-serif;font-size: 12px";
+          
+    });
 
 
 });
