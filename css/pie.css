@@ -1,0 +1,17 @@
+
+    .pie {
+        position: absolute;
+        margin: 2%;
+        background-color: white;
+        visibility: hidden;
+        border-color: grey;
+        border-style: solid;
+        border-width: 6px;
+        z-index: 5;
+        opacity: 1;
+    }
+
+    .pielabels {
+        text-anchor: middle;
+        pointer-events: none;
+    }

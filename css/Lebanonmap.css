@@ -1,0 +1,29 @@
+    .subunit-boundary {
+        stroke: black;
+        fill: #cdd;
+    }
+    
+    .subunit-boundary:hover {
+        stroke: black;
+        fill: #dcd;
+        cursor: pointer;
+    }
+    
+    .districtName {
+        fill: black;
+        fill-opacity: .5;
+        text-anchor: middle;
+        font-weight: bold;
+        cursor: pointer
+    }
+    
+    .env {
+        fill: #5e0231;
+        font-size: 12px;
+    }
+    
+    .env:hover {
+        fill: #c7a693;
+        cursor: pointer;
+    }
+    

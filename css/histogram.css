@@ -1,0 +1,35 @@
+ #histdiv {
+        position: absolute;
+        margin: 2%;
+        background-color: white;
+    
+        z-index: 20;
+    }
+    #hist{
+        border-color: grey;
+        border-style: solid;
+        border-width: 6px;
+
+    }
+    .bar {
+  fill: steelblue;
+}
+
+.bar:hover {
+opacity: 0.5;
+}
+
+.axis {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
