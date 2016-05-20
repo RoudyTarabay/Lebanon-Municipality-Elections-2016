@@ -15,3 +15,6 @@
         text-anchor: middle;
         pointer-events: none;
     }
+    .piepath:hover{
+        opacity: 0.7;
+    }

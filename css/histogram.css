@@ -12,11 +12,12 @@
 
     }
     .bar {
-  fill: steelblue;
+  fill: #4ABDAC;
 }
 
 .bar:hover {
 opacity: 0.5;
+cursor: pointer;
 }
 
 .axis {

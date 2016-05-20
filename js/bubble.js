@@ -19,7 +19,8 @@
 
             }
      var  bubble_color = d3.scale.ordinal()
-          .range(['#F59B84', '#EED2B0', '#F5B68C', '#C0EAC0', '#BDE0D1']);
+     .range(['#007849','#F7B733', '#FC4A1A','#4ABDAC'])
+         // .range(['#F59B84', '#EED2B0', '#F5B68C', '#C0EAC0', '#BDE0D1']);
 
 
 

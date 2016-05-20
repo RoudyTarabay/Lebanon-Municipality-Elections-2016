@@ -28,10 +28,12 @@ function drawPie(baladiyye) {
         var pie_height = svgdim.height / 2;
         var radius = Math.min(pie_width, pie_height) / 2;
 
-        var color = d3.scale.ordinal()
-            .range(['#00CCCC', '#0099FF']);
-        var hovercolor = d3.scale.ordinal()
-            .range(['#0099CC', '#0066FF']);
+var color = d3.scale.ordinal()
+            .range(['#F7B733', '#FC4A1A']);
+        /*var color = d3.scale.ordinal()
+            .range(['#00CCCC', '#0099FF']);*/
+        /*var hovercolor = d3.scale.ordinal()
+            .range(['#0099CC', '#0066FF']);*/
 
 
 
@@ -63,10 +65,10 @@ function drawPie(baladiyye) {
 
         var path = g2_pie
             .append('path')
+            .attr("class","piepath")
             .attr('style', 'stroke:grey;cursor:pointer')
             .on('mouseover', function(d) {
-                d3.select(this).attr('fill', function(d, i) {
-                    return hovercolor(d.data.label);
+                pietip.show(d)
 
                 }).on('mouseout', function(d) {
 
@@ -76,11 +78,9 @@ function drawPie(baladiyye) {
 
                     });
 
-                });
+                })
 
-                pietip.show(d)
-            })
-
+        
         .attr('fill', function(d, i) {
                 return color(d.data.label);
             }) // UPDATED (removed semicolon)

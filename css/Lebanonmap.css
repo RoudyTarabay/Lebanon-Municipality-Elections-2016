@@ -1,11 +1,12 @@
     .subunit-boundary {
         stroke: black;
-        fill: #cdd;
+        fill: #4ABDAC;
     }
     
     .subunit-boundary:hover {
         stroke: black;
-        fill: #dcd;
+        /*fill: #dcd;*/
+        opacity:0.6;
         cursor: pointer;
     }
     
@@ -18,12 +19,13 @@
     }
     
     .env {
-        fill: #5e0231;
+        /*fill: #FC4A1A;*/
+        fill:#F7B733;
         font-size: 12px;
     }
     
     .env:hover {
-        fill: #c7a693;
+        opacity:0.7;
         cursor: pointer;
     }
     
