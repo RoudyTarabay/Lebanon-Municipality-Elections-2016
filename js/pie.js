@@ -25,7 +25,7 @@ function drawPie(baladiyye) {
             Rate: 100 - parseFloat(csv_data[0].Rate)
         }
         var pie_width = svgdim.width / 2;
-        var pie_height = svgdim.height / 2;
+        var pie_height = svgdim.height / 2.5;
         var radius = Math.min(pie_width, pie_height) / 2;
 
 var color = d3.scale.ordinal()
@@ -60,7 +60,7 @@ var color = d3.scale.ordinal()
             .enter().append("g")
             .attr("class", "pathgroup")
             .attr('transform', 'translate(' + (pie_width / 2) +
-                ',' + (pie_height / 2) + ')');
+                ',' + (pie_height / 1.5) + ')');
 
 
         var path = g2_pie

@@ -16,7 +16,6 @@
                     .attr("id", "bubble")
                     .attr("class", "hide")
 
-
             }
      var  bubble_color = d3.scale.ordinal()
      .range(['#007849','#F7B733', '#FC4A1A','#4ABDAC'])
@@ -147,6 +146,11 @@
           }).scaleExtent([1, 1000]);
 
           bubble_svg.call(zoombubble);
+          d3.select("#testdiv")
+          .append("div")
+          .attr("id","bubbleLegend")
+          .append("p")
+          .html("Tip: Scroll towards a bubble to zoom in and see names")
       });
 
 

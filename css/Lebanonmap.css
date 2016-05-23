@@ -2,7 +2,21 @@
         stroke: black;
         fill: #4ABDAC;
     }
-    
+    #mapContainer{
+        font-size: 0.7vw;
+    }
+   
+    #mapsvg{
+        position:absolute;
+        width:100%;
+        height: auto;
+    }
+
+    #envelopLegend{
+        content: " Municipality, click to see election info";
+        font-weight: bold;
+
+    }
     .subunit-boundary:hover {
         stroke: black;
         /*fill: #dcd;*/
@@ -21,7 +35,7 @@
     .env {
         /*fill: #FC4A1A;*/
         fill:#F7B733;
-        font-size: 12px;
+        font-size: 0.7vw;
     }
     
     .env:hover {

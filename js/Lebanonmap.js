@@ -2,19 +2,18 @@ var window_width = $(window).width(),
     window_height = $(window).height();
 
 function drawMap() {
-    var mapsvg = d3.select("body").append("svg")
+    var mapsvg = d3.select("#mapContainer").append("svg")
         .attr("id", "mapsvg")
-        .attr("width", window_width)
-        .attr("height", window_height)
-        .attr("style", "position:fixed")
-        .on("click", mapListener);
+        .on("click", mapListener)
+          .attr("viewBox", "0 0 " + window_width + " " + window_height )
+        .attr("preserveAspectRatio", "xMinYMin");
 
 
     d3.json("Coordinates/2009_districts.json", function(error, Lebanon) {
         if (error) throw error;
 
         var projection = d3.geo.mercator()
-            .scale(20000)
+            .scale(window_width*12)
             .center([36, 34])
 
         .translate([window_width / 2, window_height / 2]);
@@ -40,14 +39,33 @@ function drawMap() {
 
         drawDistrictNames(map_g, map_path);
         drawMunicipalities(mapsvg,map_g,map_path,projection);
+        addMapLegend(mapsvg);
     });
 
+}
+function addMapLegend(mapsvg){
+    d3.select("#mapContainer").append("div")
+    .attr("style","position:relative;width:20%;height:30%;")
+    .attr("id","divContainer")
+    .append("i")
+    .attr("id","envelopLegend")
+      .attr("class", "fa fa-envelope")
+      .attr("style","color:#F7B733;margin:2%")
+    d3.select("#divContainer").append("h4")
+    .attr("style", function(){
+        return "font-size:0.8vw;position:relative;margin:2%; top:-10%;padding-left:1.3em"})
+    .html(" Municipality, click for election info");
+    d3.select("#divContainer").append("h4")
+        .attr("style", "position:relative;margin:2%;font-size:0.8vw;")
+        .html("Tip: Scroll to Zoom");
+  
 }
 
 function drawMunicipalities(mapsvg,map_g,map_path, projection) {
     d3.json("Coordinates/baladiyetCoordinates.json", function(error, city) {
         mapsvg.selectAll(".env").data(city)
-            .enter().append('g').attr('class', 'fontawesomeContainer').append("text")
+            .enter().append('g').attr('class', 'fontawesomeContainer')
+            .append("text")
             .attr("font-family", "FontAwesome")
             .attr("class", "env")
             .on("click", municipalityListener)
@@ -57,6 +75,7 @@ function drawMunicipalities(mapsvg,map_g,map_path, projection) {
             .attr("transform", function(d, i) {
                 return "translate(" + projection([d["Coordinates"][0], d["Coordinates"][1]]) + ")";
             })
+
             makeZoomable(mapsvg,map_g,map_path,projection)
 
     });
@@ -87,7 +106,7 @@ function makeZoomable(mapsvg,map_g,map_path,projection){
 }
 function drawDistrictNames(map_g, map_path) {
     map_g.append("text")
-        .attr("font-size", "10px")
+        .attr("font-size", "0.5vw")
         .attr("class", "districtName")
         .attr("transform", function(d) {
             if (d.properties.DISTRICT == "Zgharta")
@@ -149,7 +168,7 @@ function drawDistrictNames(map_g, map_path) {
         .attr("style", "stroke:black;stroke-width:1");
 
     map_g.append("text")
-        .attr("font-size", "10px")
+        .attr("font-size", "0.5vw")
         .attr("class", "districtName")
         .text(function(d) {
             if (d.properties.DISTRICT.indexOf("Beirut-three") >= 0 || d.properties.DISTRICT.indexOf("Saida") >= 0) {
