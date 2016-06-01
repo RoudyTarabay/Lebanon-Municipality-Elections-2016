@@ -9,12 +9,12 @@
                     .append("div")
                     .attr("id", "testdiv")
                     .attr("class", "hide empty")
-                    .attr("style", "position:relative;top:" + svgdim.height / 2 + "px")
+                    .attr("style", "width:" + (svgdim.width) + "px;height:" + (svgdim.height / 2) + "px;top:" + (svgdim.height / 2 +6) + "px")
                     .append("svg")
-                    .attr("width", svgdim.width)
-                    .attr("height", svgdim.height / 2)
                     .attr("id", "bubble")
                     .attr("class", "hide")
+                    .attr("preserveAspectRatio", "xMidYMid meet")
+                  .attr("viewBox", "0 0 " +svgdim.width+" "+ (svgdim.height/2));
 
             }
      var  bubble_color = d3.scale.ordinal()

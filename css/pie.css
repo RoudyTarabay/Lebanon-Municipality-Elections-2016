@@ -1,20 +1,48 @@
 
     .pie {
-        position: absolute;
-        margin: 2%;
+        position: relative;
+        width: 100%;
+        height: 100%;
         background-color: white;
         visibility: hidden;
-        border-color: grey;
+         border-color: grey;
         border-style: solid;
         border-width: 6px;
         z-index: 5;
         opacity: 1;
     }
-
-    .pielabels {
-        text-anchor: middle;
-        pointer-events: none;
-    }
     .piepath:hover{
         opacity: 0.5;
     }
+#pieContainer{
+        display: inline-block;
+        position:absolute;
+        background-color:red;
+        
+        z-index:5;
+        margin:2%;
+
+}
+@media screen and (min-width: 400px) {
+    .pielabels {
+        text-anchor: start;
+        font-size: 3vw;
+        pointer-events: none;
+    }
+    
+
+
+}
+@media screen and (min-width: 1000px) {
+    .pielabels {
+        text-anchor: middle;
+        font-size: 1vw;
+        pointer-events: none;
+    }
+
+
+
+}
+
+
+

@@ -7,12 +7,17 @@ function drawPie(baladiyye) {
     };
     console.log(svgdim)
     if (d3.select("#pie")[0][0] == null) {
+        console.log(svgdim.width/2)
         d3.select("body")
+           .append("div")
+           .attr("id","pieContainer")
+           .attr("class","hide")
+           .attr("style","width:"+(svgdim.width/2)+"px;height:"+(svgdim.height/2)+"px")
             .append("svg")
             .attr("id", "pie")
             .attr("class", "pie hide")
-            .attr("width", svgdim.width / 2)
-            .attr("height", svgdim.height / 2);
+           . attr("preserveAspectRatio", "xMidYMid meet")
+            .attr("viewBox", "0 0 " +(svgdim.width/2)+" "+ (svgdim.height/2));
     }
     d3.csv("data/ParticipationRate.csv", function(error, csv_data) {
         var rate = [];

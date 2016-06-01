@@ -7,25 +7,26 @@
       };
         var svgdim = {
         width: $('.results').width(),
-        height: $('.results').height()
+        height: $('.results').height()  
     };
       if (d3.select("#hist")[0][0] == null) {
+    
+
 
           d3.select("body")
               .append("div")
               .attr("id", "histdiv")
-              .attr("class", "hide empty")
-              .attr("style", "width:" + svgdim.width / 2 + "px;height:" + svgdim.height / 2 + "px;top:6px;right:0px;left:" + (svgdim.width / 2+12) + "px")
+              .attr("style", "width:" + ((svgdim.width / 2)-3) + "px;height:" + ((svgdim.height / 2)-8) + "px;left:" + (svgdim.width / 2+12) + "px;top:14px;")
               .append("svg")
-              .attr("width", svgdim.width / 2)
-              .attr("height", svgdim.height / 2)
               .attr("id", "hist")
               .attr("class", "hide")
+              .attr("preserveAspectRatio", "none")
+              .attr("viewBox", "0 0 " +(svgdim.width/2)+" "+ ((svgdim.height/2)-12))
 
 
       }
-      var hist_width = $("#hist").width() / 1.5;
-      var hist_height = $("#hist").height() / 1.5;
+      var hist_width = (svgdim.width/2) / 1.5;
+      var hist_height = (svgdim.height/2) / 1.5;
 
       var x = d3.scale.ordinal()
           .rangeRoundBands([0, hist_width], .1);

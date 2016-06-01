@@ -2,6 +2,8 @@ var window_width = $(window).width(),
     window_height = $(window).height();
 
 function drawMap() {
+    d3.select("#overlay")
+    .on("click",mapListener);
     var mapsvg = d3.select("#mapContainer").append("svg")
         .attr("id", "mapsvg")
         .on("click", mapListener)
@@ -53,7 +55,7 @@ function addMapLegend(mapsvg){
       .attr("style","color:#F7B733;margin:2%")
     d3.select("#divContainer").append("h4")
     .attr("style", function(){
-        return "font-size:0.8vw;position:relative;margin:2%; top:-10%;padding-left:1.3em"})
+            return "font-size:0.8vw;position:relative;margin:2%; top:-10%;padding-left:1.3em"})
     .html(" Municipality, click for election info");
     d3.select("#divContainer").append("h4")
         .attr("style", "position:relative;margin:2%;font-size:0.8vw;")
