@@ -13,12 +13,12 @@ function resizeEverything(){
 });
 
     $("#histdiv").css({
+    "background-color":" red",
     "margin": "2%",
-    "width": $('#results').width()/2,
-    "height": $('#results').height()/2,
-    "left": $('#results').width()/2 +12
+    "width": $('#results').width()/2 -3,
+    "height": $('#results').height()/2-8,
+    "left": $('#results').width()/2 +12,
 });
-$("#hist").attr("viewBox", "0 0 " +($('#results').width/2)+" "+ (($('#results').height/2))) 
 
     $("#testdiv").css({
     "margin": "2%",

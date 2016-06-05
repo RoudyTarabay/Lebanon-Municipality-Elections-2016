@@ -96,17 +96,7 @@ var color = d3.scale.ordinal()
         .transition()
             .duration(2000)
             .attrTween("d", tweenPie);
-        g2_pie
-            .append("text")
-            .attr("class", "pielabels")
-            .text(function(d) {
-                console.log(d)
-                return d.data.label;
-            })
-            .attr("transform",
-                function(d) {
-                    return "translate(" + labelArc.centroid(d) + ")";
-                });
+      
 
         var pietip = d3.tip()
             .attr('class', 'd3-tip')
@@ -115,7 +105,7 @@ var color = d3.scale.ordinal()
                 return "<strong>" + d.data.label + ":</strong> <span style='color:red'>" + d.data.Rate + "</span></strong>"
             })
         g2_pie.call(pietip);
-
+        drawLegend(pie_svg,rate);
         function tweenPie(b) {
             var i = d3.interpolate({
                 startAngle: 1.1 * Math.PI,
@@ -126,5 +116,49 @@ var color = d3.scale.ordinal()
             };
         }
     });
+
+
+
+}
+
+function drawLegend(pie_svg,rate){
+
+var color = d3.scale.ordinal()
+            .range(['#F7B733', '#FC4A1A']);
+    var legendGroup=d3.select("#pieContainer").append("svg")
+    .attr("style","position:absolute;z-index:999;")
+
+    .attr("transform","translate(0,0)")
+    .append("g").attr("class","pieLegendGroup");
+
+
+    legendGroup.selectAll(".pieLegend").
+    data(rate).enter()
+    .append("rect")
+    .attr("position","absolute")
+    .attr("width","10px")
+    .attr("height","10px")
+    .attr("y",function(d,i){
+        return (i+1)+"em";
+    })
+    .attr("x",10)
+    .attr('fill', function(d) {
+        return color(d.label);
+
+    });
+     legendGroup.selectAll(".pieLegend").
+    data(rate).enter()
+    .append("text")
+    .attr("style","position:absolute")
+    .attr("y",function(d,i){
+        return (i+1.5)+"em";
+    })
+    .attr("x",30)
+    .text(function(d){
+        return d.label;
+    })
+
+    legendGroup.attr("transform","translate(0,0)");
+
 
 }

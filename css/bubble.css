@@ -1,5 +1,5 @@
     #bubble {
-        position: relative;
+        position: absolute;
         background-color: white;
         visibility: hidden;
         border-color: grey;

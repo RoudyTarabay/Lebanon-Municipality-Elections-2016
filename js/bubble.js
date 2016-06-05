@@ -146,14 +146,64 @@
           }).scaleExtent([1, 1000]);
 
           bubble_svg.call(zoombubble);
-          d3.select("#testdiv")
+         /* d3.select("#testdiv")
           .append("div")
           .attr("id","bubbleLegend")
           .append("p")
-          .html("Tip: Scroll towards a bubble to zoom in and see names")
+          .html("Tip: Scroll towards a bubble to zoom in and see names")*/
+          drawBubbleLegend(data);
       });
 
 
 
 
   }
+  function drawBubbleLegend(votes){
+ var  bubble_color = d3.scale.ordinal()
+     .range(['#007849','#F7B733', '#FC4A1A','#4ABDAC']);
+
+    var legendGroup=d3.select("#testdiv").append("svg")
+    .attr("style","position:absolute;z-index:999;")
+
+    .attr("transform","translate(0,0)")
+    .append("g").attr("class","bubbleLegendGroup");
+
+
+    var lists=[];
+d3.map(votes,function(d){
+        if(lists.indexOf(d.list)==-1){
+          console.log(d.list);
+          lists.push(d.list);
+          return d.list;
+        }
+    });
+    legendGroup.selectAll(".bubbleLegend").
+    data(lists).enter()
+    .append("rect")
+    .attr("position","absolute")
+    .attr("width","10px")
+    .attr("height","10px")
+    .attr("y",function(d,i){
+        return (i+1)+"em";
+    })
+    .attr("x",10)
+    .attr('fill', function(d) {
+        return bubble_color(d);
+
+    });
+     legendGroup.selectAll(".bubbleLegend").
+    data(lists.reverse()).enter()
+    .append("text")
+    .attr("style","position:absolute")
+    .attr("y",function(d,i){
+        return (i+1.5)+"em";
+    })
+    .attr("x",30)
+    .text(function(d){
+        return d;
+    })
+
+    legendGroup.attr("transform","translate(0,0)");
+
+
+}

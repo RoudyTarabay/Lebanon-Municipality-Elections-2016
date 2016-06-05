@@ -24,9 +24,18 @@ opacity: 0.5;
 cursor: pointer;
 }
 
-.axis {
+
+@media screen and (min-width: 400px) {
+ .axis {
+  font: 3vw sans-serif;
+}
+}
+@media screen and (min-width: 1000px) {
+ .axis {
   font: 0.7vw sans-serif;
 }
+}
+
 
 .axis path,
 .axis line {
@@ -38,3 +47,5 @@ cursor: pointer;
 .x.axis path {
   display: none;
 }
+
+

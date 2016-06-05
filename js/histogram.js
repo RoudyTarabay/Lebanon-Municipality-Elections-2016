@@ -20,7 +20,7 @@
               .append("svg")
               .attr("id", "hist")
               .attr("class", "hide")
-              .attr("preserveAspectRatio", "none")
+              .attr("preserveAspectRatio", "xMinYMax none")
               .attr("viewBox", "0 0 " +(svgdim.width/2)+" "+ ((svgdim.height/2)-12))
 
 
@@ -87,6 +87,15 @@
               .attr("class", "x axis")
               .attr("transform", "translate(0," + hist_height + ")")
               .call(xAxis);
+
+          hist_svg.select(".x").selectAll("text")            
+            .attr("transform", "rotate(20)")
+            .attr("style","text-anchor:start")
+            /*.attr("dy",function(d){
+              return this.getComputedTextLength()/20+"em";
+            });*/
+
+          console.log( hist_svg.select(".xAxis").selectAll("text") );
 
           hist_svg.append("g")
               .attr("class", "y axis")
