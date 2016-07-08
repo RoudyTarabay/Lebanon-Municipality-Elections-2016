@@ -13,9 +13,7 @@ body {
     width: 90%;
     height: 90%;
     background-color: white;
-    border-color: grey;
-    border-style: solid;
-    border-width: 6px;
+    border: 3px solid grey;
     z-index: 4;
     opacity: 0.9;
      -webkit-transition:width 300ms ease-in-out, height 300ms ease-in-out;

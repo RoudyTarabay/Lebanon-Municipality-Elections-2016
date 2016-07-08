@@ -5,20 +5,15 @@ function drawPie(baladiyye) {
         width: $('.results').width(),
         height: $('.results').height()
     };
-    console.log(svgdim)
-    if (d3.select("#pie")[0][0] == null) {
-        console.log(svgdim.width/2)
-        d3.select("body")
-           .append("div")
-           .attr("id","pieContainer")
-           .attr("class","hide")
-           .attr("style","width:"+(svgdim.width/2)+"px;height:"+(svgdim.height/2)+"px")
-            .append("svg")
-            .attr("id", "pie")
-            .attr("class", "pie hide")
-           . attr("preserveAspectRatio", "xMidYMid meet")
-            .attr("viewBox", "0 0 " +(svgdim.width/2)+" "+ (svgdim.height/2));
-    }
+
+    d3.select("#pieContainer")
+        .attr("class","hide")
+        .append("svg")
+        .attr("id", "pie")
+        .attr("class", "pie hide")
+        .attr("preserveAspectRatio", "xMidYMid meet")
+        .attr("viewBox", "0 0 " +(svgdim.width/2)+" "+ (svgdim.height/2));
+
     d3.csv("data/ParticipationRate.csv", function(error, csv_data) {
         var rate = [];
         rate[0] = {
@@ -85,7 +80,7 @@ var color = d3.scale.ordinal()
 
                 })
 
-        
+
         .attr('fill', function(d, i) {
                 return color(d.data.label);
             }) // UPDATED (removed semicolon)
@@ -96,7 +91,7 @@ var color = d3.scale.ordinal()
         .transition()
             .duration(2000)
             .attrTween("d", tweenPie);
-      
+
 
         var pietip = d3.tip()
             .attr('class', 'd3-tip')
@@ -126,10 +121,12 @@ function drawLegend(pie_svg,rate){
 var color = d3.scale.ordinal()
             .range(['#F7B733', '#FC4A1A']);
     var legendGroup=d3.select("#pieContainer").append("svg")
-    .attr("style","position:absolute;z-index:999;")
-
-    .attr("transform","translate(0,0)")
-    .append("g").attr("class","pieLegendGroup");
+        .style("position", "absolute")
+        .style("z-index", "999")
+        .style("left", "0")
+        .attr("transform","translate(0,0)")
+        .append("g")
+        .attr("class","pieLegendGroup");
 
 
     legendGroup.selectAll(".pieLegend").
