@@ -1,11 +1,6 @@
 window.addEventListener('resize',resizeEverything,true)
 
 function resizeEverything(){
-    $("#results").css({
-    "margin": "2%",
-    "width": "90%",
-    "height": "90%"
-});
     $("#pieContainer").css({
         "margin": "2%",
         "width": $('#results').width()/2,
@@ -36,7 +31,7 @@ function hideOverlay(){
 }
 function mapListener() {
     if (d3.event.target.className.baseVal != "env" || d3.event.target.id.baseVal == "overlay") {
-    	destroyAll();
+        destroyAll();
         hideOverlay();
 
         d3.selectAll(".hide").each(function(d) {
@@ -74,5 +69,5 @@ function municipalityListener(){
             return tempstyle;
         })
     });
-  
+
 }

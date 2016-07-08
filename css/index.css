@@ -5,7 +5,11 @@ body {
 .results {
     position: absolute;
     visibility: hidden;
-    margin: 2%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
     width: 90%;
     height: 90%;
     background-color: white;
