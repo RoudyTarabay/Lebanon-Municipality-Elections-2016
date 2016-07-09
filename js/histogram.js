@@ -7,24 +7,15 @@
       };
         var svgdim = {
         width: $('.results').width(),
-        height: $('.results').height()  
+        height: $('.results').height()
     };
-      if (d3.select("#hist")[0][0] == null) {
-    
 
+    d3.select("#histdiv")
+        .append("svg")
+        .attr("id", "hist")
+        .attr("class", "hide")
+        .attr("viewBox", "0 0 " +(svgdim.width/2)+" "+ ((svgdim.height/2)-12));
 
-          d3.select("body")
-              .append("div")
-              .attr("id", "histdiv")
-              .attr("style", "width:" + ((svgdim.width / 2)-3) + "px;height:" + ((svgdim.height / 2)-8) + "px;left:" + (svgdim.width / 2+12) + "px;top:14px;")
-              .append("svg")
-              .attr("id", "hist")
-              .attr("class", "hide")
-              .attr("preserveAspectRatio", "xMinYMax none")
-              .attr("viewBox", "0 0 " +(svgdim.width/2)+" "+ ((svgdim.height/2)-12))
-
-
-      }
       var hist_width = (svgdim.width/2) / 1.5;
       var hist_height = (svgdim.height/2) / 1.5;
 
@@ -88,7 +79,7 @@
               .attr("transform", "translate(0," + hist_height + ")")
               .call(xAxis);
 
-          hist_svg.select(".x").selectAll("text")            
+          hist_svg.select(".x").selectAll("text")
             .attr("transform", "rotate(20)")
             .attr("style","text-anchor:start")
             /*.attr("dy",function(d){
@@ -115,7 +106,7 @@
                   return x(d.key);
               })
               .attr("width", x.rangeBand())
-           
+
               .on("mouseover", tip.show)
               .on("mouseout", tip.hide)
               .attr("y",y(0))

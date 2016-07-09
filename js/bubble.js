@@ -3,20 +3,15 @@
         width: $('.results').width(),
         height: $('.results').height()
     };
-       if (d3.select("#bubble")[0][0] == null) {
 
-                d3.select("body")
-                    .append("div")
-                    .attr("id", "testdiv")
-                    .attr("class", "hide empty")
-                    .attr("style", "width:" + (svgdim.width) + "px;height:" + (svgdim.height / 2) + "px;top:" + (svgdim.height / 2 +6) + "px")
-                    .append("svg")
-                    .attr("id", "bubble")
-                    .attr("class", "hide")
-                    .attr("preserveAspectRatio", "xMidYMid meet")
-                  .attr("viewBox", "0 0 " +svgdim.width+" "+ (svgdim.height/2));
+    d3.select("#testdiv")
+        .attr("class", "hide empty")
+        .append("svg")
+        .attr("id", "bubble")
+        .attr("class", "hide")
+        .attr("preserveAspectRatio", "xMidYMid meet")
+      .attr("viewBox", "0 0 " +svgdim.width+" "+ (svgdim.height/2));
 
-            }
      var  bubble_color = d3.scale.ordinal()
      .range(['#007849','#F7B733', '#FC4A1A','#4ABDAC'])
          // .range(['#F59B84', '#EED2B0', '#F5B68C', '#C0EAC0', '#BDE0D1']);
@@ -142,7 +137,7 @@
                       return "fill:white; font-family:Helvetica Neue Helvetica, Arial, san-serif;font-size:" + 12 / (d3.event.scale * 0.9) + "px";
                   }
               });
-             
+
           }).scaleExtent([1, 1000]);
 
           bubble_svg.call(zoombubble);
@@ -163,10 +158,12 @@
      .range(['#007849','#F7B733', '#FC4A1A','#4ABDAC']);
 
     var legendGroup=d3.select("#testdiv").append("svg")
-    .attr("style","position:absolute;z-index:999;")
-
-    .attr("transform","translate(0,0)")
-    .append("g").attr("class","bubbleLegendGroup");
+        .style("position", "absolute")
+        .style("left", 0)
+        .style("z-index", "999")
+        .attr("transform","translate(0,0)")
+        .append("g")
+        .attr("class","bubbleLegendGroup");
 
 
     var lists=[];
