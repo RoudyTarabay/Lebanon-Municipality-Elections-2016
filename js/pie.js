@@ -1,3 +1,4 @@
+var data=[];
 function drawPie(baladiyye) {
 
 
@@ -14,15 +15,17 @@ function drawPie(baladiyye) {
         .attr("preserveAspectRatio", "xMidYMid meet")
         .attr("viewBox", "0 0 " +(svgdim.width/2)+" "+ (svgdim.height/2));
 
-    d3.csv("data/ParticipationRate.csv", function(error, csv_data) {
+    d3.csv("data/ParticipationRate.csv",type, function(error, csv_data) {
+        console.log(csv_data)
+        console.log(data)
         var rate = [];
         rate[0] = {
             label: "Participated",
-            Rate: parseFloat(csv_data[0].Rate)
+            Rate: parseFloat(data[baladiyye].Rate)
         };
         rate[1] = {
             label: "Didn't participate",
-            Rate: 100 - parseFloat(csv_data[0].Rate)
+            Rate: 100 - parseFloat(data[baladiyye].Rate)
         }
         var pie_width = svgdim.width / 2;
         var pie_height = svgdim.height / 2.5;
@@ -158,4 +161,8 @@ var color = d3.scale.ordinal()
     legendGroup.attr("transform","translate(0,0)");
 
 
+}
+function type(d){
+    data[d.City]=d;
+    return d;
 }

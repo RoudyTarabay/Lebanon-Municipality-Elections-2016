@@ -13,8 +13,8 @@
       .attr("viewBox", "0 0 " +svgdim.width+" "+ (svgdim.height/2));
 
      var  bubble_color = d3.scale.ordinal()
-     .range(['#007849','#F7B733', '#FC4A1A','#4ABDAC'])
-         // .range(['#F59B84', '#EED2B0', '#F5B68C', '#C0EAC0', '#BDE0D1']);
+     .range(['#007849','#F7B733', '#FC4A1A','#4ABDAC','#3366aa','#77aa77','#001100']);
+              // .range(['#F59B84', '#EED2B0', '#F5B68C', '#C0EAC0', '#BDE0D1']);
 
 
 
@@ -29,7 +29,7 @@
 
 
 
-      d3.csv("data/Beirut.csv", function(error, data) {
+      d3.csv("data/"+baladiyye+".csv", function(error, data) {
           var bubbletip = d3.tip()
               .attr('class', 'd3-tip')
               .offset([-10, 0])
@@ -155,8 +155,8 @@
   }
   function drawBubbleLegend(votes){
  var  bubble_color = d3.scale.ordinal()
-     .range(['#007849','#F7B733', '#FC4A1A','#4ABDAC']);
-
+     .range(['#007849','#F7B733', '#FC4A1A','#4ABDAC','#3366aa','#77aa77','#001100']);
+     
     var legendGroup=d3.select("#testdiv").append("svg")
         .style("position", "absolute")
         .style("left", 0)
@@ -167,6 +167,8 @@
 
 
     var lists=[];
+    console.log(votes.reverse())
+    console.log(votes)
 d3.map(votes,function(d){
         if(lists.indexOf(d.list)==-1){
           console.log(d.list);
@@ -185,11 +187,11 @@ d3.map(votes,function(d){
     })
     .attr("x",10)
     .attr('fill', function(d) {
-        return bubble_color(d);
+        return bubble_color(d); 
 
     });
      legendGroup.selectAll(".bubbleLegend").
-    data(lists.reverse()).enter()
+    data(lists).enter()
     .append("text")
     .attr("style","position:absolute")
     .attr("y",function(d,i){

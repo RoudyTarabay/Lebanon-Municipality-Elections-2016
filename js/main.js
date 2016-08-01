@@ -32,11 +32,11 @@ function destroyAll() {
     destroy("#bubble");
 
 }
-function municipalityListener(){
+function municipalityListener(city){
     console.log("listner")
-    drawPie();
-    drawHistogram();
-    drawBubble();
+    drawPie(city);
+    drawHistogram(city);
+    drawBubble(city);
     showOverlay();
     var resultsSvg = d3.selectAll(".results");
     d3.selectAll(".hide").each(function(d) {

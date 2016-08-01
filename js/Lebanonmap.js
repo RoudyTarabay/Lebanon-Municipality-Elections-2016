@@ -65,12 +65,15 @@ function addMapLegend(mapsvg){
 
 function drawMunicipalities(mapsvg,map_g,map_path, projection) {
     d3.json("Coordinates/baladiyetCoordinates.json", function(error, city) {
+        console.log(city)
         mapsvg.selectAll(".env").data(city)
             .enter().append('g').attr('class', 'fontawesomeContainer')
             .append("text")
             .attr("font-family", "FontAwesome")
             .attr("class", "env")
-            .on("click", municipalityListener)
+            .on("click", function(d){
+                console.log(d.City)
+                municipalityListener(d.City)})
             .text(function(d) {
                 return '\uf0e0';
             })

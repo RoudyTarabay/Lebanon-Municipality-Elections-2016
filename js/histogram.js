@@ -40,7 +40,7 @@
 
 
 
-      d3.csv("data/Beirut.csv", function(error, csv_data) {
+      d3.csv("data/"+baladiye+".csv", function(error, csv_data) {
           if (error) throw error;
 
 
