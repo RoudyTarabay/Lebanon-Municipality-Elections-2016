@@ -1,10 +1,10 @@
 #histdiv {
-    display: inline-block;
     box-sizing: border-box;
     z-index: 5;
-    width: 100%;
+    width: 50%;
     height: 50%;
     border: 3px solid grey;
+    float: right;
 }
 
 @media (min-width: 768px) {
@@ -20,7 +20,7 @@
   background-color:white;
 
 }
-    .bar {
+.bar {
   fill: #4ABDAC;
 }
 
@@ -53,4 +53,7 @@ cursor: pointer;
   display: none;
 }
 
+.histogramLegendX{
+  transform: rotate(20deg);
 
+}

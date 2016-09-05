@@ -3,6 +3,7 @@ body {
 }
 
 .results {
+    display: inline-block;;
     position: absolute;
     visibility: hidden;
     top: 0;

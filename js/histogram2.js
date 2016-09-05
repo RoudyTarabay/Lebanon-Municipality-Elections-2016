@@ -1,14 +1,13 @@
-
-  function initializeHistogram(){
-    margin = {
-        top: 50,
-        right: 50,
-        bottom: 30,
-        left: 100
-    };
-    svgdim = {
-      width: $('.results').width(),
-      height: $('.results').height()
+  function drawHistogram(baladiye) {
+      var margin = {
+          top: 50,
+          right: 50,
+          bottom: 30,
+          left: 100
+      };
+        var svgdim = {
+        width: $('.results').width(),
+        height: $('.results').height()
     };
 
     d3.select("#histdiv")
@@ -17,39 +16,27 @@
         .attr("class", "hide")
         .attr("viewBox", "0 0 " +(svgdim.width/2)+" "+ ((svgdim.height/2)-12));
 
-    hist_width = (svgdim.width/2) / 1.5;
-    hist_height = (svgdim.height/2) / 1.5;
+      var hist_width = (svgdim.width/2) / 1.5;
+      var hist_height = (svgdim.height/2) / 1.5;
 
-    x = d3.scale.ordinal()
-      .rangeRoundBands([0, hist_width], .1);
+      var x = d3.scale.ordinal()
+          .rangeRoundBands([0, hist_width], .1);
 
-    y = d3.scale.linear()
-      .range([hist_height, 0]);
+      var y = d3.scale.linear()
+          .range([hist_height, 0]);
 
-    xAxis = d3.svg.axis()
-      .scale(x)
-      .orient("bottom");
+      var xAxis = d3.svg.axis()
+          .scale(x)
+          .orient("bottom");
 
-    yAxis = d3.svg.axis()
-      .scale(y)
-      .orient("left")
-      .ticks(5);
-  hist_svg = d3.select("#hist")
-                  .append("g")
-                  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-   hist_svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + hist_height + ")")
-    .call(xAxis);
+      var yAxis = d3.svg.axis()
+          .scale(y)
+          .orient("left")
+          .ticks(5);
 
-
-  }
-
-
-  function drawHistogram(baladiye) {
-   
-    
-      hist_svg.selectAll(".bar").data(data).exit().remove();
+      var hist_svg = d3.select("#hist")
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
 
@@ -70,29 +57,36 @@
                   });
               }).entries(csv_data);
 
+          console.log(data);
+          console.log(totalVotes);
 
+          // y.domain([0, 1100000]);
           y.domain([0, 100]);
 
           x.domain(data.map(function(d) {
               return d.key;
           }));
 
-           tip = d3.tip()
+          var tip = d3.tip()
               .attr('class', 'd3-tip')
               .offset([-10, 0])
               .html(function(d) {
                   return "<strong>Percentage Of Votes: </strong> <span style='color:red'>" + (d.values / totalVotes * 100).toFixed(2) + "</span>"
               });
 
-            hist_svg.select(".x").call(xAxis);
+          hist_svg.append("g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(0," + hist_height + ")")
+              .call(xAxis);
 
-
-          hist_svg.select(".x").selectAll("text").attr("class","histogramLegendX")
+          hist_svg.select(".x").selectAll("text")
+            .attr("transform", "rotate(20)")
             .attr("style","text-anchor:start")
             /*.attr("dy",function(d){
               return this.getComputedTextLength()/20+"em";
             });*/
 
+          console.log( hist_svg.select(".xAxis").selectAll("text") );
 
           hist_svg.append("g")
               .attr("class", "y axis")
@@ -130,9 +124,7 @@
               });
 
 
-            hist_svg.call(tip);
-
-
+       //   hist_svg.call(tip);
       });
   }
-
+drawHistogram("Beirut");  

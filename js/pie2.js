@@ -1,15 +1,12 @@
 var data=[];
-var pie; 
-var rate = [];
-var path;
-var arc;
-var g2_pie;
-function initializePie(){
+function drawPie(baladiyye) {
+
 
     var svgdim = {
         width: $('.results').width(),
         height: $('.results').height()
     };
+    if(d3.select("#pie")[0][0]==null)
     d3.select("#pieContainer")
         .attr("class","hide")
         .append("svg")
@@ -18,18 +15,10 @@ function initializePie(){
         .attr("preserveAspectRatio", "xMidYMid meet")
         .attr("viewBox", "0 0 " +(svgdim.width/2)+" "+ (svgdim.height/2));
 
-}
-function drawPie(baladiyye) {
-
-
-    var svgdim = {
-        width: $('.results').width(),
-        height: $('.results').height()
-    };
-
     d3.csv("data/ParticipationRate.csv",type, function(error, csv_data) {
         console.log(csv_data)
         console.log(data)
+        var rate = [];
         rate[0] = {
             label: "Participated",
             Rate: parseFloat(data[baladiyye].Rate)
@@ -43,17 +32,22 @@ function drawPie(baladiyye) {
         var radius = Math.min(pie_width, pie_height) / 2;
 
 var color = d3.scale.ordinal()
-            .range(['#F7B733', '#FC4A1A']);       
+            .range(['#F7B733', '#FC4A1A']);
+        /*var color = d3.scale.ordinal()
+            .range(['#00CCCC', '#0099FF']);*/
+        /*var hovercolor = d3.scale.ordinal()
+            .range(['#0099CC', '#0066FF']);*/
+
 
 
         var pie_svg = d3.select('#pie');
 
 
-         arc = d3.svg.arc()
+        var arc = d3.svg.arc()
             .outerRadius(radius);
 
 
-         pie = d3.layout.pie()
+        var pie = d3.layout.pie()
             .value(function(d) {
                 console.log(d)
                 return d.Rate;
@@ -64,36 +58,53 @@ var color = d3.scale.ordinal()
             .outerRadius(radius - 40)
             .innerRadius(radius - 40);
 
-    path = pie_svg.datum(rate)
-            .append("g")
+        var g2_pie = pie_svg.selectAll(".pathgroup")
+            .data(pie(rate))
+            .enter().append("g")
+            .attr("class", "pathgroup")
             .attr('transform', 'translate(' + (pie_width / 2) +
-                ',' + (pie_height / 1.5) + ')').selectAll(".piepath")
-            .data(pie)
-            .enter().append("path")
+                ',' + (pie_height / 1.5) + ')');
+
+
+        var path = g2_pie
+            .append('path')
             .attr("class","piepath")
-            .attr("fill", function(d, i) { return color(i); })
-            .attr("d", arc)
-             .on('mouseover', function(d) {
+            .attr('style', 'stroke:grey;cursor:pointer')
+            .on('mouseover', function(d) {
                 pietip.show(d)
 
                 }).on('mouseout', function(d) {
 
                     pietip.hide(d);
+                    d3.select(this).attr('fill', function(d) {
+                        return color(d.data.label);
+
+                    });
+
                 })
-            .each(function(d) { this._current = d; }); // store the initial angles
+
+
+        .attr('fill', function(d, i) {
+                return color(d.data.label);
+            }) // UPDATED (removed semicolon)
+            .each(function(d) {
+                this._current = d;
+            })
+
+        .transition()
+            .duration(2000)
+            .attrTween("d", tweenPie);
+
 
         var pietip = d3.tip()
             .attr('class', 'd3-tip')
-            .offset([-10, -10])
+            .offset([-10, 0])
             .html(function(d) {
                 return "<strong>" + d.data.label + ":</strong> <span style='color:red'>" + d.data.Rate + "</span></strong>"
             })
-        pie_svg.call(pietip);
-       drawLegend(pie_svg,rate);
-        
-    });
-}
-function tweenPie(b) {
+        g2_pie.call(pietip);
+       // drawLegend(pie_svg,rate);
+        function tweenPie(b) {
             var i = d3.interpolate({
                 startAnglde: 1.1 * Math.PI,
                 endAngle: 1.1 * Math.PI
@@ -102,23 +113,12 @@ function tweenPie(b) {
                 return arc(i(t));
             };
         }
+    });
 
-function changePie(baladiyye){
 
-    rate[0] = {
-                label: "Participated",
-                Rate: parseFloat(data[baladiyye].Rate)
-            };
-    rate[1] = {
-                label: "Didn't participate",
-                Rate: 100 - parseFloat(data[baladiyye].Rate)
-            };
-    pie.value(function(d){return d.Rate});
-    //path = path.data(pie);
-    path =  path.data(pie(rate)); // compute the new angles
-   path.transition().duration(750).attrTween("d", tweenPie);
 
 }
+
 function drawLegend(pie_svg,rate){
 
 var color = d3.scale.ordinal()
@@ -166,3 +166,4 @@ function type(d){
     data[d.City]=d;
     return d;
 }
+drawPie("Beirut");
