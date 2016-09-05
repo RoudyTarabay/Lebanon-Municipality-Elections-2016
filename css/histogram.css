@@ -12,6 +12,11 @@
         width: 50%;
     }
 }
+@media (max-width: 767px) {
+    #histdiv {
+        width: 100%;
+    }
+}
 
 #hist{
   position: relative;

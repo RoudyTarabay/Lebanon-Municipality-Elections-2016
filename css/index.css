@@ -25,11 +25,26 @@ body {
 .hide {
     visibility: hidden;
 }
-#overlay {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background:rgba(0,0,0,0.6);
-    z-index: 2;
-    visibility: hidden
+@media (min-width: 768px) {
+    #overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background:rgba(0,0,0,0.6);
+        z-index: 2;
+        visibility: hidden
+    }
+
+}
+
+@media (max-width: 767px) {
+    #overlay {
+        position: absolute;
+        width: 100%;
+        height: 150%;
+        background:rgba(0,0,0,0.6);
+        z-index: 2;
+        visibility: hidden
+    }
+
 }
