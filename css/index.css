@@ -6,11 +6,15 @@ body {
 
     text-align:center;
     margin-top: 10px;
+    position:absolute;
+    width: 100%;
+    z-index: 2;
 
 }
 .github-link{
         text-decoration: none;
-color:rgb(0, 120, 73);
+        color:rgb(0, 120, 73);
+
 }
 
 .results {
